@@ -1,0 +1,514 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⚡ Sovereign Ops</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+    background: #0a0e1a;
+    color: #f1f5f9;
+    min-height: 100vh;
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+  
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 12px 0 20px;
+    border-bottom: 2px solid #f59e0b;
+    margin-bottom: 20px;
+  }
+  .header .label {
+    color: #f59e0b;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .header .day {
+    color: #fbbf24;
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .header .date {
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  
+  /* Cards */
+  .card {
+    background: #1a1f35;
+    border: 1px solid #2d3348;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    color: #fbbf24;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Big stat */
+  .big-stat {
+    text-align: center;
+    padding: 16px 0;
+  }
+  .big-stat .number {
+    font-size: 48px;
+    font-weight: 900;
+    color: #fbbf24;
+    line-height: 1;
+  }
+  .big-stat .label {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  /* Two-column grid */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  /* Pillar bars */
+  .pillar {
+    margin-bottom: 14px;
+  }
+  .pillar:last-child { margin-bottom: 0; }
+  .pillar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .pillar-name { color: #f1f5f9; }
+  .pillar-pct { color: #fbbf24; font-weight: 800; }
+  .bar {
+    height: 8px;
+    background: #2d3348;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .pillar-detail {
+    font-size: 11px;
+    color: #64748b;
+  }
+  
+  /* Snapshot rows */
+  .snap-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #2d3348;
+    font-size: 14px;
+  }
+  .snap-row:last-child { border-bottom: none; }
+  .snap-label { color: #94a3b8; }
+  .snap-value { color: #f1f5f9; font-weight: 600; }
+  .snap-value.good { color: #34d399; }
+  .snap-value.bad { color: #f87171; }
+  
+  /* Quick actions */
+  .actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .action-btn {
+    background: #2d3348;
+    color: #f1f5f9;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 50px;
+    transition: background 0.2s;
+  }
+  .action-btn:active { background: #3d4458; }
+  .action-btn.success { background: #047857; }
+  .action-btn.danger { background: #991b1b; }
+  
+  /* Verse */
+  .verse {
+    font-style: italic;
+    color: #fbbf24;
+    text-align: center;
+    line-height: 1.5;
+    padding: 4px 0;
+    font-size: 14px;
+  }
+  
+  /* Loading */
+  .loading {
+    text-align: center;
+    color: #64748b;
+    padding: 40px;
+  }
+  
+  /* Quick log inputs */
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .input-row input {
+    flex: 1;
+    background: #2d3348;
+    border: 1px solid #3d4458;
+    color: #f1f5f9;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  .input-row button {
+    background: #f59e0b;
+    color: #0a0e1a;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  /* Salah quick log */
+  .salah-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .salah-btn {
+    background: #2d3348;
+    color: #f1f5f9;
+    border: none;
+    padding: 10px 4px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .salah-btn.M { background: #047857; }
+  .salah-btn.J { background: #1e40af; }
+  .salah-btn.H { background: #6b21a8; }
+  .salah-btn.W { background: #b45309; }
+  .salah-btn.Q { background: #991b1b; }
+  
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #047857;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .toast.show { opacity: 1; }
+  
+  /* Footer */
+  .footer {
+    text-align: center;
+    color: #64748b;
+    font-size: 11px;
+    padding: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading">⚡ Loading Sovereign Ops...</div>
+
+<div id="dashboard" style="display:none;">
+  
+  <!-- Header -->
+  <div class="header">
+    <div class="label">⚡ SOVEREIGN OPS</div>
+    <div class="day">Day <span id="dayNum">—</span> / 90</div>
+    <div class="date" id="dateStr">—</div>
+  </div>
+  
+  <!-- Big stats -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="big-stat">
+        <div class="number"><span id="habitsToday">—</span>/16</div>
+        <div class="label">✅ Today</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="big-stat">
+        <div class="number"><span id="weightCurr">—</span></div>
+        <div class="label">⚖️ KG (target <span id="weightTarget">—</span>)</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Verse -->
+  <div class="card">
+    <div class="card-title">📖 Verse of the Day</div>
+    <div class="verse" id="verseText">—</div>
+  </div>
+  
+  <!-- 5 Pillars -->
+  <div class="card">
+    <div class="card-title">🏛️ 5 Pillars</div>
+    <div id="pillarsContainer">
+      <div class="pillar" data-key="deen">
+        <div class="pillar-header"><span class="pillar-name">🕌 DEEN</span><span class="pillar-pct">—</span></div>
+        <div class="bar"><div class="bar-fill" style="width:0%"></div></div>
+        <div class="pillar-detail">—</div>
+      </div>
+      <div class="pillar" data-key="body">
+        <div class="pillar-header"><span class="pillar-name">💪 BODY</span><span class="pillar-pct">—</span></div>
+        <div class="bar"><div class="bar-fill" style="width:0%"></div></div>
+        <div class="pillar-detail">—</div>
+      </div>
+      <div class="pillar" data-key="money">
+        <div class="pillar-header"><span class="pillar-name">💸 MONEY</span><span class="pillar-pct">—</span></div>
+        <div class="bar"><div class="bar-fill" style="width:0%"></div></div>
+        <div class="pillar-detail">—</div>
+      </div>
+      <div class="pillar" data-key="knowledge">
+        <div class="pillar-header"><span class="pillar-name">🎓 KNOWLEDGE</span><span class="pillar-pct">—</span></div>
+        <div class="bar"><div class="bar-fill" style="width:0%"></div></div>
+        <div class="pillar-detail">—</div>
+      </div>
+      <div class="pillar" data-key="family">
+        <div class="pillar-header"><span class="pillar-name">❤️ FAMILY</span><span class="pillar-pct">—</span></div>
+        <div class="bar"><div class="bar-fill" style="width:0%"></div></div>
+        <div class="pillar-detail">—</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Snapshot -->
+  <div class="card">
+    <div class="card-title">📊 Snapshot</div>
+    <div class="snap-row">
+      <span class="snap-label">😊 Mood / 🔥 Motiv / ⚡ Energy</span>
+      <span class="snap-value" id="snapMood">—</span>
+    </div>
+    <div class="snap-row">
+      <span class="snap-label">😴 Sleep</span>
+      <span class="snap-value" id="snapSleep">—</span>
+    </div>
+    <div class="snap-row">
+      <span class="snap-label">🕌 Salah</span>
+      <span class="snap-value" id="snapSalah" style="font-size:11px">—</span>
+    </div>
+    <div class="snap-row">
+      <span class="snap-label">🎯 AHT</span>
+      <span class="snap-value" id="snapAHT">—</span>
+    </div>
+    <div class="snap-row">
+      <span class="snap-label">🎯 CSAT</span>
+      <span class="snap-value" id="snapCSAT">—</span>
+    </div>
+    <div class="snap-row">
+      <span class="snap-label">💸 Net Debt</span>
+      <span class="snap-value" id="snapDebt">—</span>
+    </div>
+  </div>
+  
+  <!-- Quick Salah Log -->
+  <div class="card">
+    <div class="card-title">🕌 Quick Salah Log</div>
+    <div style="margin-bottom:8px;font-size:12px;color:#94a3b8;">Tap prayer + location:</div>
+    <div id="salahLogger"></div>
+  </div>
+  
+  <!-- Quick Log Weight & Sleep -->
+  <div class="card">
+    <div class="card-title">📝 Quick Log</div>
+    <div class="input-row">
+      <input id="weightInput" type="number" step="0.1" placeholder="Weight (kg)">
+      <button onclick="logWeight()">Log</button>
+    </div>
+    <div class="input-row">
+      <input id="sleepInput" type="number" step="0.5" placeholder="Sleep (hrs)">
+      <button onclick="logSleep()">Log</button>
+    </div>
+  </div>
+  
+  <!-- Habit One -->
+  <div class="card">
+    <div class="card-title">🛡️ Habit One</div>
+    <div class="actions-grid">
+      <button class="action-btn success" onclick="logFree()">✅ FREE</button>
+      <button class="action-btn danger" onclick="logReset()">🔄 RESET</button>
+    </div>
+  </div>
+  
+  <div class="footer">Bismillah · Allah ma'ak · Sovereign Ops v1.0</div>
+</div>
+
+<div id="toast" class="toast">Saved</div>
+
+<script>
+let currentSalahPrayer = null;
+
+// Load dashboard data
+function loadDashboard() {
+  google.script.run
+    .withSuccessHandler(renderDashboard)
+    .withFailureHandler(showError)
+    .getDashboardData();
+}
+
+function renderDashboard(data) {
+  if (data.error) {
+    document.getElementById('loading').innerHTML = '⚠️ ' + data.error;
+    return;
+  }
+  
+  document.getElementById('dayNum').textContent = data.dayOfQuest;
+  document.getElementById('dateStr').textContent = data.dateString;
+  document.getElementById('habitsToday').textContent = data.habitsToday;
+  document.getElementById('weightCurr').textContent = data.weight.current.toFixed(1);
+  document.getElementById('weightTarget').textContent = data.weight.target;
+  document.getElementById('verseText').textContent = data.verse;
+  
+  // Pillars
+  Object.keys(data.pillars).forEach(key => {
+    const el = document.querySelector('.pillar[data-key="' + key + '"]');
+    if (el) {
+      el.querySelector('.pillar-pct').textContent = data.pillars[key].pct + '%';
+      el.querySelector('.bar-fill').style.width = data.pillars[key].pct + '%';
+      el.querySelector('.pillar-detail').textContent = data.pillars[key].detail;
+    }
+  });
+  
+  // Snapshot
+  document.getElementById('snapMood').textContent = data.snapshot.mood;
+  document.getElementById('snapSleep').textContent = data.snapshot.sleep;
+  document.getElementById('snapSalah').textContent = data.snapshot.salah;
+  document.getElementById('snapAHT').textContent = data.snapshot.aht;
+  document.getElementById('snapAHT').className = 'snap-value ' + (data.snapshot.ahtGood ? 'good' : 'bad');
+  document.getElementById('snapCSAT').textContent = data.snapshot.csat;
+  document.getElementById('snapCSAT').className = 'snap-value ' + (data.snapshot.csatGood ? 'good' : 'bad');
+  document.getElementById('snapDebt').textContent = data.snapshot.debt;
+  
+  // Build salah logger
+  buildSalahLogger();
+  
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+}
+
+function buildSalahLogger() {
+  const prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+  const labels = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+  const container = document.getElementById('salahLogger');
+  container.innerHTML = '';
+  
+  prayers.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.style.marginBottom = '10px';
+    row.innerHTML = '<div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">' + labels[i] + '</div>' +
+      '<div class="salah-grid">' +
+      ['M','J','H','W','Q'].map(loc => 
+        '<button class="salah-btn ' + loc + '" onclick="logSalah(\'' + p + '\',\'' + loc + '\')">' + loc + '</button>'
+      ).join('') +
+      '</div>';
+    container.appendChild(row);
+  });
+}
+
+function logWeight() {
+  const v = document.getElementById('weightInput').value;
+  if (!v) return;
+  google.script.run.withSuccessHandler(() => {
+    showToast('✅ Weight: ' + v + ' kg');
+    document.getElementById('weightInput').value = '';
+    loadDashboard();
+  }).logWeightWeb(v);
+}
+
+function logSleep() {
+  const v = document.getElementById('sleepInput').value;
+  if (!v) return;
+  google.script.run.withSuccessHandler(() => {
+    showToast('✅ Sleep: ' + v + ' h');
+    document.getElementById('sleepInput').value = '';
+    loadDashboard();
+  }).logSleepWeb(v);
+}
+
+function logSalah(prayer, location) {
+  google.script.run.withSuccessHandler(() => {
+    showToast('🕌 ' + prayer + ' → ' + location);
+    loadDashboard();
+  }).logSalahWeb(prayer, location);
+}
+
+function logFree() {
+  google.script.run.withSuccessHandler(() => {
+    showToast('🛡️ FREE logged');
+    loadDashboard();
+  }).logFreeWeb();
+}
+
+function logReset() {
+  if (!confirm('Honest reset for Habit One?')) return;
+  google.script.run.withSuccessHandler(() => {
+    showToast('🔄 Reset logged');
+    loadDashboard();
+  }).logResetWeb();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function showError(err) {
+  document.getElementById('loading').innerHTML = '⚠️ Error: ' + err.message;
+}
+
+// Auto-load on page open
+loadDashboard();
+
+// Refresh every 60 seconds
+setInterval(loadDashboard, 60000);
+</script>
+
+</body>
+</html>
