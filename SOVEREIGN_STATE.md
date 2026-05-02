@@ -32,21 +32,35 @@ Top 0.5% of personal Apps Script projects.
 
 Privacy hardened same session: 10 stale memory entries deleted, identity narrative purged from Glean memory, self-policing rules locked, personal Drive vault built.
 
+Day 11 audits found + resolved:
+- 2 duplicate TxnIDs (Finance_TxnIdRepair v1.0 cleanup)
+- 45 legacy reversal orphans (Day 5-7 wipe artifacts, addressed Day 12)
+- CC outstanding reconciled: 78,766 PKR sheet truth
+
 ---
 
-## 💰 CURRENT POSITION (Day 11 EOD)
+## 💰 CURRENT POSITION (Day 11 EOD — RECONCILED)
 
-### Liquid Assets
+### Liquid Assets (per DoubleEntry balance proof)
 
 | Account | Balance (PKR) |
 |---|---|
 | Cash | 50 |
-| Meezan | ~116,851 |
-| Mashreq Bank | -35 (legitimate pending ATM fee) |
-| **TOTAL LIQUID** | **~117,000** |
+| Meezan | 116,851 |
+| Mashreq Bank | 168 |
+| UBL | 97 |
+| UBL Prepaid | 1 |
+| Easypaisa | 1 (rounded from 0.77) |
+| Naya Pay | 0 (rounded from 0.31) |
+| **TOTAL LIQUID** | **117,168** |
 
-### Liabilities
-- **Alfalah CC outstanding: ~58,400 PKR** (limit 100k · util 58% · due day 6 · close day 12)
+### Liabilities (CORRECTED — was 58,400 mental, now 78,766 verified)
+- **Alfalah CC outstanding: 78,766 PKR** (sheet truth)
+- Bank app shows 78,655 (111 PKR pending-post lag, within tolerance)
+- Limit 100k · util 78.8% (was thought 58%, real ~79%)
+- Due day 6 · close day 12
+
+🚨 **Util upgraded: 58% → 79%.** CC pressure higher than mental model. May affect CC payment strategy this week.
 
 ### Personal Debts
 
@@ -65,17 +79,17 @@ Privacy hardened same session: 10 stale memory entries deleted, identity narrati
 
 (Real names live in personal Drive: 🔒 Personal Vault / Sovereign Name Map)
 
-### Net Position
-- Sheet net worth: **+58,600 PKR**
-- True burden (incl personal debts): **-164,900 PKR**
+### Net Position (UPDATED)
+- Sheet net worth: **+38,402 PKR** (was thought +58,600 — drop of 20k due to CC reality)
+- True burden (incl personal debts): **-185,098 PKR**
 
 ---
 
-## 📂 INSTALLED FILES (48 in repo)
+## 📂 INSTALLED FILES (49 in repo)
 
 ### Counts by folder
 - `/core/` — 4 · `/ai/` — 4 · `/webapp/` — 2 · `/cockpits/` — 5
-- `/finance/` — **16** (added Finance_DoubleEntryAuditor.gs)
+- `/finance/` — **17** (added Finance_DoubleEntryAuditor.gs + Finance_TxnIdRepair.gs)
 - `/audit/` — 6 · `/theme-layout/` — 4 · `/knowledge/` — 1 · `/utils/` — 4
 - ROOT — appsscript.json, README.md, SOVEREIGN_STATE.md, SOVEREIGN_OPS_PATTERNS.md
 
@@ -86,7 +100,8 @@ Privacy hardened same session: 10 stale memory entries deleted, identity narrati
 | `finance/Finance_Pro.gs` | **v3.3** | BANKING-GRADE (LockService + balance constraint + FX snapshot) |
 | `finance/Finance_Debts.gs` | v1.1 | Zain bug fixed |
 | `finance/Finance_Audit.gs` | **v1.5** | WORM compliant + 46 actions whitelisted |
-| `finance/Finance_DoubleEntryAuditor.gs` | **v1.0** | NEW · banking balance proof |
+| `finance/Finance_DoubleEntryAuditor.gs` | **v1.0** | Banking balance proof |
+| `finance/Finance_TxnIdRepair.gs` | **v1.0** | One-shot duplicate TxnID repair |
 | `finance/Finance_ATM.gs` | v1.2 | Atomic transfer pair |
 | `finance/Finance_NanoLoan.gs` | v1.1 | In-sheet form |
 | `audit/Audit_Guardian.gs` | **v1.2** | TxnID + FX + Audit Log immutability |
@@ -105,14 +120,15 @@ Trigger overflow risk addressed by deleting `highlightToday` (Day 11) + `checkBi
 
 ## 🚨 ACTIVE QUEUE (Day 12+)
 
-### THIS WEEK (CC due May 6)
+### THIS WEEK (CC due May 6 · CC outstanding 78,766)
+- [ ] **Decide CC payment strategy** — util at 79% needs attention
 - [ ] Add DEBT-1 receivable (1,000 PKR) to Debts tab
-- [ ] Pay CRED-2 8,500 (clears 5 of 6 personal debts)
-- [ ] Decide CC payment strategy
+- [ ] Pay CRED-2 8,500 (clears 5 of 6 personal debts) — but consider CC priority first
 
 ### NEXT SESSION (Day 12 — ARCHITECTURE)
 - [ ] **Master onEdit Dispatcher** — consolidate 9 triggers → 1 router (frees 8 slots permanently)
-- [ ] Add `DOUBLE_ENTRY_SCAN` to Finance_Audit v1.5 whitelist
+- [ ] **Finance_DoubleEntryAuditor v1.1** — date-window safe-list for legacy orphans (suppress 45 historical noise)
+- [ ] Add `DOUBLE_ENTRY_SCAN` + `TXNID_DUP_REPAIRED` to Finance_Audit v1.5 whitelist
 - [ ] **Settings_Pro source repair** (73 PRO_* #ERROR! cells)
 - [ ] **Finance_Debts v1.2** — smarter sync verifier
 
@@ -122,7 +138,7 @@ Trigger overflow risk addressed by deleting `highlightToday` (Day 11) + `checkBi
 - [ ] **Pseudonymization rollout** — real names → codes in code/data
 - [ ] **D1 migration** — Cloudflare Pages app shell (deferred)
 
-### BANKING TIER 2 (deferred from audit)
+### BANKING TIER 2 (deferred from Day 10 audit)
 - [ ] H1: Wrap Finance_Debts in LockService
 - [ ] H4: Lock NanoLoan ledger range
 - [ ] H6: Auto-prune snapshots >14 days
@@ -169,7 +185,7 @@ Trigger overflow risk addressed by deleting `highlightToday` (Day 11) + `checkBi
 
 When user types **"Bismillah, open the sovereign vault"**:
 1. Glean reads this file from repo
-2. Acknowledge: "🛡️ Sovereign Vault opened. Day [N]. Banking-grade 96/100 locked. Active queue: [top 3]. Send when ready."
+2. Acknowledge: "🛡️ Sovereign Vault opened. Day [N]. Banking-grade 96/100 locked. CC outstanding 78,766 PKR (util 79%). Active queue: [top 3]. Send when ready."
 3. Wait for user
 
 ---
