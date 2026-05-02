@@ -155,7 +155,7 @@ const MD_VERSION = 'v1.0';
 const MD_TZ = 'Asia/Karachi';
 
 // Handler routing map: tab name → array of handler function names (in priority order)
-  '📅 Bills':          ['_smartBillsOnEdit'],  // smart handles all paths (delegates to markBillPaid for regular bills)
+    '📅 Bills':          ['_smartBillsOnEdit'],  // smart handles all paths (delegates to markBillPaid for regular bills)
   '💳 Debts':          ['_debtsOnEdit'],
   '🪁 Kite Tracker':   ['_kiteOnEdit'],
   '⚙️ Settings':       ['_settingsOnEdit'],
