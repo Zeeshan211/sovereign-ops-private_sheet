@@ -1,19 +1,12 @@
 // ════════════════════════════════════════════════════════════════════
-// 🎯 Menu_Loader.gs v3.1 — CONSOLIDATED MENU REGISTRY
-// LOCKED · 2026-05-01 · 6 top-level menus (Sheets limit-safe)
+// 🎯 Menu_Loader.gs v3.2 — CONSOLIDATED MENU REGISTRY
+// LOCKED · 2026-05-02 · 6 top-level menus + auto-wired Guardian
 //
-// CHANGES FROM v3.0:
-//   - Added 🏧 ATM submenu under 🎛️ Sovereign (5 items)
-//     · Log ATM Withdraw / Show Pending / Reverse / Embed Hub Card / Verify
-//     · Calls inline (no longer relies on appendATMMenu top-level)
-//   - Pre-wired 📱 Nano Loans submenu under 🎛️ Sovereign (Phase 3 ready)
-//     · Currently shows "Coming in Phase 3" placeholder so menu builds
-//       cleanly even before Finance_NanoLoan.gs is loaded
-//   - Order inside Sovereign: Habits · Salah · Charts · Reconcile ·
-//     Merchants · Bank Diff · Salary · 🪁 Kite · 🏧 ATM · 📱 Nano Loans ·
-//     Tabs · Audit · Backup · Settings
-//   - Top bar unchanged:
-//     ⚡ Mission · 💰 Finance · 💳 Debts · 📈 Progress · 🛠️ Ops · 🎛️ Sovereign
+// CHANGES FROM v3.1:
+//   ✅ #10 FIX: 🛡️ Guardian menu now auto-loaded on Sheet open.
+//      v3.1 required user to run appendAuditGuardianMenu() manually
+//      after every reload. v3.2 calls it inside onOpen so menu survives
+//      reload permanently.
 // ════════════════════════════════════════════════════════════════════
 
 function onOpen(e) {
@@ -157,7 +150,6 @@ function onOpen(e) {
       .addSeparator()
       .addItem('🔍 Verify Integrity', 'verifyKiteTracker'));
 
-    // ─── 🏧 ATM — Phase 2 of slowness sprint, v1.1 ───
     sovereign.addSubMenu(ui.createMenu('🏧 ATM')
       .addItem('🏧 Log ATM Withdraw', 'uiATMLogWithdraw')
       .addItem('📋 Show Pending Reversals', 'uiATMShowPending')
@@ -166,7 +158,6 @@ function onOpen(e) {
       .addItem('📌 Embed Hub Card (rows 32-46)', 'embedATMPanelInHub')
       .addItem('🔍 Verify ATM Tracker', 'verifyATMTracker'));
 
-    // ─── 📱 Nano Loans — Phase 3 v1.1 (in-sheet form) ───
     sovereign.addSubMenu(ui.createMenu('📱 Nano Loans')
       .addItem('🔄 Rebuild Tab (form + data)', 'rebuildNanoLoansTab')
       .addItem('📌 Embed Hub Card (rows 47-54)', 'embedNanoLoanPanelInHub')
@@ -231,6 +222,12 @@ function onOpen(e) {
     log.push('✓ Sovereign (incl ATM v1.1 + NanoLoan placeholder)');
   } catch(err) { log.push('⚠️ Sovereign: ' + err.message); }
 
+  // ── 7. GUARDIAN (v3.2: auto-wired top-level) ──
+  if (typeof appendAuditGuardianMenu === 'function') {
+    try { appendAuditGuardianMenu(); log.push('✓ Guardian (v3.2 auto-wired)'); }
+    catch(err) { log.push('⚠️ Guardian: ' + err.message); }
+  }
+
   // Save log for diagnostics
   try {
     PropertiesService.getDocumentProperties().setProperty('menu_load_log', log.join('\n'));
@@ -241,11 +238,11 @@ function manualReloadMenus() {
   onOpen();
   try {
     SpreadsheetApp.getUi().alert(
-      '✅ All menus reloaded.\n\n' +
-      'Top bar (6 menus):\n' +
-      '⚡ Mission · 💰 Finance · 💳 Debts · 📈 Progress · 🛠️ Ops · 🎛️ Sovereign\n\n' +
-      '🛠️ Ops contains: Linter · Vaccine · Ghost Hunter · Guardian · Layout · Themes\n\n' +
-      '🎛️ Sovereign now includes: 🏧 ATM (v1.1) + 📱 Nano Loans (Phase 3 placeholder)'
+      '✅ All menus reloaded (v3.2).\n\n' +
+      'Top bar (7 menus):\n' +
+      '⚡ Mission · 💰 Finance · 💳 Debts · 📈 Progress · 🛠️ Ops · 🎛️ Sovereign · 🛡️ Guardian\n\n' +
+      '🛡️ Guardian is now auto-wired (no more manual call).\n' +
+      '🎛️ Sovereign includes: 🏧 ATM (v1.1) + 📱 Nano Loans (Phase 3)'
     );
   } catch(e) { Logger.log(e); }
 }
@@ -256,4 +253,3 @@ function showMenuLoadLog() {
     SpreadsheetApp.getUi().alert('MENU LOAD LOG\n\n' + log);
   } catch(e) { Logger.log(log); }
 }
-

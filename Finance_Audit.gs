@@ -1,15 +1,22 @@
 // ════════════════════════════════════════════════════════════════════
-// 📜 Finance_Audit.gs — FULL AUDIT TRAIL VIEWER v1.3
+// 📜 Finance_Audit.gs — FULL AUDIT TRAIL VIEWER v1.4
 // LOCKED · 7-Layer Audit · Self-Contained
 //
-// CHANGES FROM v1.2 (2026-04-29 RE-AUDIT Finding 6):
-//   - FIXED: FIN_AUDIT_HUB_CLEAR_ROWS reduced 25 → 22
-//     v1.2 cleared rows 76-100 which destroyed kite section header at row 99
-//     on every audit panel refresh. v1.3 clears only 76-97 (panel zone +
-//     1 buffer row), preserves rows 98+ for downstream panels.
+// CHANGES FROM v1.3:
+//   ✅ Whitelist expanded 27 → 35 actions (added 8 Guardian actions):
+//        PHANTOM_PURGE, PHANTOM_DETECTED, DIRECT_EDIT_DETECTED,
+//        INTEGRITY_SCAN, GUARDIAN_INSTALL, GUARDIAN_UNINSTALL,
+//        PHANTOM_PURGE_FIX, ROW_LABELED
+//   ✅ Color coded: red for direct-edit/purge (security), grey for
+//      install/scan (system), green for self-heal (recovery).
 //
-// CHANGES FROM v1.2 (carried forward):
-//   - Whitelist 27 actions across 8 visual groups
+// 7-LAYER DELTA:
+//   LAYER 4 CELL-STATE: 8 new entries in FIN_AUDIT_ACTION_CATEGORIES
+//                       map; FIN_AUDIT_WHITELIST auto-derived. No
+//                       schema change to Audit Log source tab (4 cols).
+//   LAYER 6 BACKWARD-COMPAT: Pure additive. Existing 27 actions render
+//                            identically. New actions surface in
+//                            📜 Finance Audit tab + Hub recent panel.
 // ════════════════════════════════════════════════════════════════════
 
 const FIN_AUDIT_TAB = '📜 Finance Audit';
@@ -18,9 +25,10 @@ const FIN_AUDIT_TZ = 'Asia/Karachi';
 const FIN_AUDIT_MAX_ROWS = 500;
 const FIN_AUDIT_HUB_PANEL_ROWS = 20;
 const FIN_AUDIT_HUB_START_ROW = 76;
-const FIN_AUDIT_HUB_CLEAR_ROWS = 22;  // v1.3: was 25 → collided with kite row 99
+const FIN_AUDIT_HUB_CLEAR_ROWS = 22;
 
 const FIN_AUDIT_ACTION_CATEGORIES = {
+  // Existing 27 (unchanged from v1.3)
   'TXN_LOGGED':            { type: '💸 Transaction', color: '#16A34A' },
   'TXN_REVERSED':          { type: '↩️ Reversal',    color: '#D97706' },
   'TRANSFER':              { type: '💱 Transfer',    color: '#2563EB' },
@@ -47,7 +55,16 @@ const FIN_AUDIT_ACTION_CATEGORIES = {
   'SALARY_LOGGED':         { type: '💰 Salary',      color: '#16A34A' },
   'KITE_LOGGED':           { type: '🪁 Kite',        color: '#D97706' },
   'KITE_TRACKER_REBUILD':  { type: '🔄 Kite Build',  color: '#64748B' },
-  'FIN_AUDIT_EXPORTED':    { type: '💾 Audit Export', color: '#94A3B8' }
+  'FIN_AUDIT_EXPORTED':    { type: '💾 Audit Export', color: '#94A3B8' },
+  // v1.4: 8 new Guardian actions
+  'PHANTOM_PURGE':         { type: '🧨 Phantom Purge', color: '#991B1B' },
+  'PHANTOM_DETECTED':      { type: '⚠️ Phantom Flag',  color: '#DC2626' },
+  'DIRECT_EDIT_DETECTED':  { type: '✏️ Direct Edit',   color: '#B91C1C' },
+  'INTEGRITY_SCAN':        { type: '🔍 Integrity',     color: '#94A3B8' },
+  'GUARDIAN_INSTALL':      { type: '🛡️ Guard Install', color: '#64748B' },
+  'GUARDIAN_UNINSTALL':    { type: '🛑 Guard Off',     color: '#64748B' },
+  'PHANTOM_PURGE_FIX':     { type: '🔧 Self-heal',     color: '#16A34A' },
+  'ROW_LABELED':           { type: '🏷️ Row Labeled',   color: '#16A34A' }
 };
 
 const FIN_AUDIT_WHITELIST = Object.keys(FIN_AUDIT_ACTION_CATEGORIES);
@@ -109,9 +126,9 @@ function _readAuditEntries(limit) {
 
 function buildFinanceAuditTabUI() {
   buildFinanceAuditTab(SpreadsheetApp.getActiveSpreadsheet());
-  _alertA('✅ 📜 Finance Audit tab built (v1.3).\n\n' +
+  _alertA('✅ 📜 Finance Audit tab built (v1.4).\n\n' +
           'Whitelist tracks ' + FIN_AUDIT_WHITELIST.length + ' action types.\n' +
-          'Hub clear zone reduced 25→22 rows (no longer collides with kite at row 99).\n\n' +
+          'v1.4 ADDS 8 Guardian actions (PHANTOM_PURGE / DIRECT_EDIT_DETECTED / etc).\n\n' +
           'Hidden source: Audit Log tab.');
 }
 
@@ -130,7 +147,7 @@ function buildFinanceAuditTab(ss) {
   widths.forEach((w, i) => s.setColumnWidth(i + 1, w));
 
   s.getRange('A1:G1').merge()
-    .setValue('📜 FINANCE AUDIT v1.3 — full timestamped history of every action')
+    .setValue('📜 FINANCE AUDIT v1.4 — full timestamped history of every action (incl 🛡️ Guardian)')
     .setBackground(T.bgSection).setFontColor('#FFFFFF').setFontWeight('bold')
     .setFontSize(15).setHorizontalAlignment('center').setVerticalAlignment('middle');
   s.setRowHeight(1, 36);
@@ -218,14 +235,13 @@ function renderAuditPanelInHub(sheet, startRow) {
   const T = getAuditTheme();
   const entries = _readAuditEntries(FIN_AUDIT_HUB_PANEL_ROWS);
 
-  // v1.3: clearRows reduced 25 → 22 (clears 76-97, leaves 98+ untouched)
   const clearRows = FIN_AUDIT_HUB_CLEAR_ROWS;
   try { sheet.getRange(startRow, 1, clearRows, 12).breakApart(); } catch(e) {}
   sheet.getRange(startRow, 1, clearRows, 12).clearContent().clearFormat();
   sheet.getRange(startRow, 1, clearRows, 12).setBackground(T.bgPage);
 
   sheet.getRange(startRow, 1, 1, 12).merge()
-    .setValue('📜 RECENT AUDIT TRAIL — last ' + FIN_AUDIT_HUB_PANEL_ROWS + ' finance actions (full log: 📜 Finance Audit tab)')
+    .setValue('📜 RECENT AUDIT TRAIL — last ' + FIN_AUDIT_HUB_PANEL_ROWS + ' finance + Guardian actions (full log: 📜 Finance Audit tab)')
     .setBackground(T.bgSection).setFontColor('#FFFFFF').setFontWeight('bold')
     .setFontSize(13).setHorizontalAlignment('center').setVerticalAlignment('middle');
   sheet.setRowHeight(startRow, 28);
@@ -274,7 +290,7 @@ function refreshFinanceAudit() {
   buildFinanceAuditTab(ss);
   try { embedAuditPanelInHub(); } catch(e) { Logger.log('Hub panel embed failed: ' + e); }
   const entries = _readAuditEntries();
-  _alertA('✅ Audit refreshed (v1.3).\n\nTotal: ' + entries.length + ' actions · ' + FIN_AUDIT_WHITELIST.length + ' types tracked.\nHub panel uses 22-row clear zone (kite header at row 99 preserved).');
+  _alertA('✅ Audit refreshed (v1.4).\n\nTotal: ' + entries.length + ' actions · ' + FIN_AUDIT_WHITELIST.length + ' types tracked.\nGuardian actions now visible in tab + Hub panel.');
 }
 
 function exportAuditToCSV() {
@@ -311,13 +327,14 @@ function verifyFinanceAudit() {
   const sourceTab = ss.getSheetByName(FIN_AUDIT_SOURCE);
   const entries = _readAuditEntries();
 
-  let report = '🔍 📜 FINANCE AUDIT v1.3 INTEGRITY\n\n';
+  let report = '🔍 📜 FINANCE AUDIT v1.4 INTEGRITY\n\n';
   report += (auditTab ? '✅' : '❌') + ' Audit tab present\n';
   report += (sourceTab ? '✅' : '❌') + ' Audit Log source present\n';
   report += '✓ Filtered finance actions: ' + entries.length + '\n';
-  report += '✓ Action types tracked: ' + FIN_AUDIT_WHITELIST.length + '\n';
+  report += '✓ Action types tracked: ' + FIN_AUDIT_WHITELIST.length + ' (v1.4: was 27 in v1.3)\n';
+  report += '✓ Guardian actions whitelisted: PHANTOM_PURGE, DIRECT_EDIT_DETECTED, INTEGRITY_SCAN, +5 more\n';
   report += '✓ Hub panel anchor row: ' + FIN_AUDIT_HUB_START_ROW + '\n';
-  report += '✓ Hub clear rows: ' + FIN_AUDIT_HUB_CLEAR_ROWS + ' (was 25 in v1.2 → kite collision fixed)\n';
+  report += '✓ Hub clear rows: ' + FIN_AUDIT_HUB_CLEAR_ROWS + '\n';
 
   if (typeof getSettingBool === 'function') {
     const enabled = getSettingBool('PRO_AUDIT_LOG_ENABLED');
