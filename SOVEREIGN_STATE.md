@@ -8,7 +8,7 @@
 ## CURRENT CHUNK
 
 **Chunk 1 — FINANCE COMPLETE** · Status: in progress
-**Active sub-chunk:** Sub-1D-2c (next session start point)
+**Active sub-chunk:** Sub-1D-3a (next session start point — Transfer form atomic OUT+IN)
 
 ---
 
@@ -28,30 +28,39 @@ Telegram bot ingests bank/CC SMS into ledger.
 - Known partial gaps (queued for Sub-1G): transfer_to_account_id null on transfers (~100k Liquid undercount), Bills count short 4 of 10 (rows 11-14 of 📅 Bills tab empty)
 
 ### ✅ Sub-1D-1a — Safety schema (DONE 2026-05-04)
-4 D1 tables created via Cloudflare console:
-- `audit_log` · `snapshots` · `snapshot_data` · `reconciliation`
+4 D1 tables created: `audit_log` · `snapshots` · `snapshot_data` · `reconciliation`
 
 ### ✅ Sub-1D-2a — Categories + Goals + Budgets (DONE 2026-05-04)
-3 D1 tables created + seeded:
-- `categories` (30 rows, mirrors sheet master list)
-- `goals` (4 rows: AI Node, Emergency, Hajj, Marriage)
-- `budgets` (11 rows: Family 15k, Internet 4k, Food 5k, etc.)
+3 D1 tables created + seeded: `categories` (30 rows) · `goals` (4 rows) · `budgets` (11 rows)
 
 ### ✅ Sub-1D-2b — Audit infrastructure (DONE 2026-05-04)
 3 files shipped to sovereign-finance repo:
 - `functions/api/_lib.js` — shared helpers: `json()`, `uuid()`, `audit()`, `snapshot()`
 - `functions/api/snapshots.js` — GET list / GET detail / POST create
-- `functions/api/transactions.js` v0.0.9 — POST now writes audit_log row per insert
-- Smoke test passed end-to-end: live API POST → txn inserted → audit_log row matched
+- `functions/api/transactions.js` v0.0.9 — POST writes audit_log row per insert
+- Smoke test passed end-to-end
 
-### 🔜 Sub-1D-2c — Add Transaction form on Hub (NEXT)
-Frontend form on index.html → POST /api/transactions → auto-audit. First write UI on live site.
+### ✅ Sub-1D-2c — Add Transaction form on Hub (DONE 2026-05-04)
+- `index.html` Add Txn form at top of Hub
+- `js/hub.js` v0.0.5 — form handler, dropdowns, toast, refresh
+- First write UI live on site
 
-### 🔜 Sub-1D-2d — Reverse transaction action
-DELETE+audit pattern, atomic for linked transfer pairs.
+### ✅ Sub-1D-2d — Reverse transaction (DONE 2026-05-04)
+- Schema patch: added `reversed_by` + `reversed_at` columns to `transactions`
+- `functions/api/transactions/reverse.js` — atomic soft-reverse with auto-snapshot + audit + debt restore
+- `js/hub.js` v0.0.7 — reverse button on each tx row, confirm dialog, toast
+- `index.html` rewritten to use design system v0.7.4 classes (was breaking visual style — fixed)
 
-### 🔜 Sub-1D-2e — Snapshot management UI
-snapshots.html page + Hub "Recent Snapshots" panel.
+### ✅ Sub-1D-2e — Snapshots UI (DONE 2026-05-04)
+- `snapshots.html` — viewer page with create form + stats + list
+- `js/snapshots.js` — create handler, list loader, expand-row detail with per-table counts
+
+### 🔜 Sub-1D-3 series (NEXT SESSION)
+- 3a: Transfer form (atomic OUT+IN with linked_txn_id)
+- 3b: Mark Bill Paid action (POST → expense txn + update bills.last_paid_date + audit)
+- 3c: USD/PKR rate fetch+cache endpoint + display on Hub
+- 3d: Salary auto-detect (Meezan + Income + 110-200k + day 28-5 → suggest categorization)
+- 3e: CC validation gate (>500 PKR Alfalah CC = warn before save)
 
 ---
 
@@ -59,14 +68,18 @@ snapshots.html page + Hub "Recent Snapshots" panel.
 
 | Phase | Scope | Status |
 |---|---|---|
-| 1D-1a | 4 safety tables (audit_log, snapshots, snapshot_data, reconciliation) | ✅ |
-| 1D-1b | /api/audit endpoint + audit.html viewer + Hub recent activity panel | partial (api done, UI pending) |
+| 1D-1a | 4 safety tables | ✅ |
+| 1D-1b | /api/audit endpoint + audit.html viewer + Hub recent activity panel | partial (api done, UI pending — push to Sub-1D-5e) |
 | 1D-2a | categories, goals, budgets tables + seed | ✅ |
 | 1D-2b | _lib.js + /api/snapshots + audit-wired /api/transactions | ✅ |
-| 1D-2c | Add Transaction form on Hub | NEXT |
-| 1D-2d | Reverse transaction action | |
-| 1D-2e | Snapshot UI + restore (read-only first) | |
-| 1D-3a-e | Transfer · Bill Pay · USD/PKR · Salary auto-detect · CC validation gate | |
+| 1D-2c | Add Transaction form on Hub | ✅ |
+| 1D-2d | Reverse transaction action | ✅ |
+| 1D-2e | Snapshots UI | ✅ |
+| 1D-3a | Transfer form atomic OUT+IN | NEXT |
+| 1D-3b | Mark Bill Paid | |
+| 1D-3c | USD/PKR rate API + display | |
+| 1D-3d | Salary auto-detect | |
+| 1D-3e | CC validation gate | |
 | 1D-4a-e | Intl FX math · Goals UI · Budget UI · Accounts page · Reconciliation dashboard | |
 | 1D-5a-e | Color coding · Net Worth fix · Categories dropdowns · Verify Suite · Repo hygiene | |
 
@@ -74,23 +87,23 @@ snapshots.html page + Hub "Recent Snapshots" panel.
 
 ## REPO MAP — sovereign-finance (Cloudflare)
 
-### Pages (5)
-index.html · audit.html · debts.html · transactions.html · bills.html
+### Pages (6)
+index.html · audit.html · debts.html · transactions.html · bills.html · snapshots.html
 
-### JS in /js/ (8)
-app.js · store.js · theme.js · hub.js · audit.js · debts.js · bills.js · transactions.js
+### JS in /js/ (9)
+app.js · store.js · theme.js · hub.js (v0.0.7) · audit.js · debts.js · bills.js · transactions.js · snapshots.js
 
 ### CSS in /css/ (1)
-app.css
+app.css (design system v0.7.4 · 2,467 lines · 5 themes)
 
-### API in /functions/api/ (7)
-balances.js · transactions.js (v0.0.9 audited) · debts.js · bills.js · audit.js · snapshots.js · _lib.js
+### API in /functions/api/ (8)
+balances.js · transactions.js (v0.0.9 audited) · debts.js · bills.js · audit.js · snapshots.js · _lib.js · transactions/reverse.js
 
 ### API in /functions/api/admin/ (1)
 migrate-from-sheet.js (Sub-1C, v1.1)
 
 ### D1 tables (12)
-- Original (4): accounts, transactions, debts, bills
+- Original (4): accounts, transactions (now with reversed_by, reversed_at), debts, bills
 - Sub-1D-1a (4): audit_log, snapshots, snapshot_data, reconciliation
 - Sub-1D-2a (3): categories, goals, budgets
 - Pre-existing (2 ignored): merchants, settings
@@ -100,8 +113,7 @@ README.md · seed_minimal.sql
 
 ### MISSING (queued for Sub-1D-5e repo hygiene)
 - js/nav.js (referenced by every page header — silent 404)
-- js/snapshots.js · js/reconciliation.js
-- snapshots.html · reconciliation.html · 404.html
+- js/reconciliation.js · reconciliation.html · 404.html
 - wrangler.toml · package.json · .gitignore · _headers · _redirects
 - migrations/ folder (D1 schema only in console history, NOT version-controlled)
 
@@ -136,10 +148,14 @@ Token expires ~2026-06-04. Operator regenerates ~30 days before expiry.
 6. Baby-step instructions standard (URL + paste + verify per step)
 7. Operator decides when to stop — Glean never suggests breaks
 8. Privacy lockdown — no real names, codes only (CRED-1..6, DEBT-1)
+9. ALWAYS read existing CSS/code before introducing new markup or class names
+10. Use only existing design system classes — never invent new ones without explicit approval
 
 ---
 
 ## NEXT SESSION START
 
 Activation: type "builder online"
-Glean acks with chunk + sub-chunk position, then waits for "ship Sub-1D-2c" or operator override.
+Glean acks with chunk + sub-chunk position, then waits for "ship Sub-1D-3a" or operator override.
+
+**Sub-1D-3a scope**: Transfer form on Hub. Atomic OUT+IN row pair with `linked_txn_id` column (schema patch needed first). Reverse action will then auto-detect linked pairs and reverse both atomically.
