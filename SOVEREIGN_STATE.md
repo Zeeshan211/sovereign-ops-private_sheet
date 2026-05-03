@@ -1,300 +1,300 @@
-# 🛡️ SOVEREIGN OPS — STATE FILE
-**Single source of truth for cross-session context.**
+# 🛡️ SOVEREIGN MIGRATION — HANDOFF TO NEW CHAT
 
-*Last updated: End of Session 11 · 2026-05-03 · OPERATING MODEL EVOLVED*
-
----
-
-## 🎯 PROJECT IDENTITY
-
-**Sovereign Life OS** — integrated personal life-system with AI as watchdog. Predicts and prevents life-jolts via continuous data + intelligence across all domains.
-
-**End state:** Cloudflare D1 + Workers + Pages PWA · family-facing · multi-domain · banking-grade safety throughout · sheet retired to backup-only · public-facing tool on GitHub serving Pakistani families · monetization via product or service when proof matures.
-
-**Operator identity:** Builder serving the public, with sovereignty as guiding principle.
+**Last action:** Step 4 done (Apps Script File A saved)
+**Next action:** Step 5 — add receiver file to website repo
+**Resume command:** "Resume from Step 5 of Sub-1C migration"
 
 ---
 
-## 🔑 ACTIVATION PHRASE
+## 📍 EXACT POSITION
 
-**Sovereign Ops:** `builder online`
-**Motive co-pilot (work, separate):** `Bismillah, ignite the co-pilot`
-
-On Sovereign activation, Glean reads this file and acknowledges:
-"🛡️ Vault online. Current chunk: [X] · Status: [sub-status]. Active items: [top 3]. Send when ready."
-
----
-
-## 📦 OPERATING MODEL
-
-**Retired:** "Day N of 90" framing
-**Active:** Chunk-shipping model
-
-A chunk = a complete life-OS domain (Finance / Personal / Health / Knowledge / Family) hardened to banking-grade in sheet, then migrated to Cloudflare D1+Workers+Pages, family-usable end-to-end.
-
-**Speed measured in chunks shipped, not days elapsed.** Real capacity, not artificial pace.
-
----
-
-## 🚧 CURRENT CHUNK
-
-**CHUNK 1 — FINANCE COMPLETE** · Status: ~70% done
-
-### Sub-chunks
-- **1A** Finance sheet 100/100 — IN PROGRESS
-- **1B** SMS auto-ingest live — NOT STARTED
-- **1C** Cloudflare D1 schema + sync — IN PROGRESS (operator already built frontend with dummy data)
-- **1D** Cloudflare write-back + PWA polish — NOT STARTED
-
-### Sub-1A open items
-- Manual stamp Maid C6/H6 + Alfalah CC C10
-- Finance_BillsAutoStamp v1.0 (Quick-Entry → Bills sync)
-- Finance_CrossTabAuditor v1.1 (BBF awareness · reversal-aware · fuzzy match · multi-type debt)
-- Finance_Debts v1.2 (variable installments UX)
-- Settings_Pro source repair (73 PRO_* #ERROR! cells)
-- Statement Cycle Tracker for CC
-- Tab declutter through Life OS lens
-
-### Sub-1B open items
-- SMS Forwarder Android app install
-- Telegram bot listener for forwarded SMS
-- Parser per bank (CC, Meezan, JazzCash, Easypaisa)
-- Write-to-ledger pipeline with audit trail
-
-### Sub-1C open items
-- Operator HAS: frontend + backend deployed (with dummy data)
-- Need: token to read repo + understand structure
-- Need: replace dummy data source with sheet → D1 sync OR direct D1 queries
-- Need: D1 schema for transactions, accounts, audit_log, bills, debts, salary, goals, snapshots
-- Need: Workers for write_transaction, get_balance, run_audits, generate_txnid, validate_balance_constraint
-- Need: nightly sync sheet → D1
-
-### Sub-1D open items
-- Web write-back to D1 (mirrors back to sheet for forensic continuity)
-- PWA installable on phone home screen
-- All audits run nightly on D1
-
-**Chunk 1 ship marker:** complete a full day of finance interactions WITHOUT opening sheet.
-
----
-
-## ✅ SESSION 11 WINS
-
-**Banking-grade hardening (5/5 critical fixes locked):**
-- Finance_Pro v3.3 (balance constraint + FX snapshot)
-- Finance_Audit v1.5 WORM (46 actions whitelisted)
-- Audit_Guardian v1.2 (TxnID + FX + Audit Log immutability)
-- Finance_DoubleEntryAuditor v1.0 (within-ledger balance proof)
-- Finance_TxnIdRepair v1.0 (resolved 2 duplicates)
-- Finance_BillsSmart v1.0 (zero-amount + CC auto-compute)
-- Finance_CrossTabAuditor v1.0 (5-validator cross-tab consistency)
-- Finance_CCAudit v1.0 (CC forensic chronological)
-- Master_Dispatcher v1.0.1 (consolidated 9 onEdit triggers → 1, freed 8 slots)
-
-**Score:** Banking-grade 96/100 (was 82/100 at session start, +14 in one session)
-
-**Privacy hardened:**
-- 12+ stale memory entries deleted
-- Identity narrative purged from Glean memory
-- Self-policing rules locked
-- Personal Drive vault built (4 docs)
-- Numerical honesty rules locked
-- Audit completeness rules locked
-- Strict memory hygiene policy active
-- New activation phrase locked
-
-**Truth verified:**
-- CC outstanding 78,655 PKR (bank-verified, sheet matches within 0.14%)
-- 3 Nano Loans confirmed real (60,727 PKR carried)
-- CRED-3 (12,500) + CRED-1 (70,000) drift = pre-system Balance Brought Forward (no bugs)
-- Sheet math sound (dual-path computation agrees)
-- 45 reversal orphans = legacy kite cycle artifacts (cosmetic)
-
-**Strategic shifts (this session):**
-- Project scope expanded: Sovereign Finance → Sovereign Life OS
-- Architecture decided: full migration to Cloudflare (sheet → backup-only)
-- Operating model evolved: day-counting → chunk-shipping
-- Trajectory locked: operator-builder path · public-serving tools · earn if Sovereign wills
-- Tag-prefix protocol started (gradual onboarding Phase 1)
-- Activation phrase changed for opsec
-
----
-
-## 💰 CURRENT POSITION
-
-### Liquid Assets
-
-| Account | Balance (PKR) |
+| Step | Status |
 |---|---|
-| Cash | 50 |
-| Meezan | 116,851 |
-| Mashreq Bank | 168 |
-| UBL | 97 |
-| UBL Prepaid | 1 |
-| Easypaisa | 1 |
-| Naya Pay | 0 |
-| **TOTAL LIQUID** | **117,168** |
-
-### Liabilities (BANK-VERIFIED)
-- Alfalah CC outstanding: **78,655 PKR** (util 78.7% · available 21,345)
-- Limit 100,000 · Due day 6 · Close day 12
-
-### Personal Debts (CODES — real names in personal Drive vault)
-
-| # | Code | Original | Paid | Remaining | Status |
-|---|---|---|---|---|---|
-| 1 | CRED-6 | 1,300 | 1,300 | 0 | ✅ CLEARED |
-| 2 | CRED-5 | 1,500 | 1,500 | 0 | ✅ CLEARED |
-| 3 | CRED-4 | 1,500 | 1,500 | 0 | ✅ CLEARED |
-| 4 | CRED-3 | 17,500 | 17,500 | 0 | ✅ CLEARED |
-| 5 | CRED-2 | 8,500 | 0 | 8,500 | 🟠 NEXT SNOWBALL |
-| 6 | CRED-1 | 285,000 | 70,000 | 215,000 | 🔴 BIG (BBF + active repayment) |
-| | **TOTAL OWED** | | | **223,500** | |
-
-### Receivables
-- DEBT-1: 1,000 PKR due 01 Jun 2026 ⏳ TODO add to Debts tab
-
-### Net Position
-- Sheet net worth: **+38,513 PKR**
-- True burden (incl personal debts): **-184,987 PKR**
-
-(Real names mapping lives in personal Drive: 🔒 Personal Vault / Sovereign Name Map. Glean never sees real names.)
+| 1. Pick a strong password | ✅ DONE |
+| 2. Add `MIGRATION_SECRET` in Cloudflare Pages env vars | ✅ DONE |
+| 3. Add same secret to sheet ⚙️ Settings tab | ✅ DONE |
+| 4. Save File A in Apps Script (Sheet_To_D1_Export) | ✅ DONE |
+| 5. Save File B in website repo (migrate-from-sheet.js) | ⏳ NEXT |
+| 6. Run migration via menu | ⏳ PENDING |
+| 7. Verify on live site | ⏳ PENDING |
 
 ---
 
-## 📂 INSTALLED FILES (50 in repo)
+## 🎯 STEP 5 — CLICK BY CLICK
 
-### Counts by folder
-- `/core/` — 5 (Master_Dispatcher added Session 11)
-- `/ai/` — 4
-- `/webapp/` — 2
-- `/cockpits/` — 5
-- `/finance/` — 19 (5 new Session 11: DoubleEntryAuditor, TxnIdRepair, BillsSmart, CrossTabAuditor, CCAudit)
-- `/audit/` — 6
-- `/theme-layout/` — 4
-- `/knowledge/` — 1
-- `/utils/` — 4
-- ROOT — appsscript.json, README.md, SOVEREIGN_STATE.md, SOVEREIGN_OPS_PATTERNS.md
+### Part 1 — Open repo
+1. Go to: https://github.dev/Zeeshan211/sovereign-finance
+2. Wait ~10 sec for editor
 
-### Production versions
+### Part 2 — Navigate
+3. Sidebar → expand `functions` folder
+4. Inside → expand `api` folder
 
-| File | Version |
+### Part 3 — Create admin folder
+5. Hover `api` folder name
+6. Click 📁+ icon (New Folder)
+7. Type: `admin`
+8. Press Enter
+
+### Part 4 — Create file
+9. Hover new `admin` folder
+10. Click 📄+ icon (New File)
+11. Type: `migrate-from-sheet.js`
+12. Press Enter
+
+### Part 5 — Paste FILE B code (below)
+13. Paste the entire FILE B code block
+14. Ctrl+S to save
+
+### Part 6 — Commit + push
+15. Click Source Control icon (Y branch on left)
+16. Type commit message: `Add migrate-from-sheet endpoint`
+17. Click ✓ checkmark (Commit & Push)
+
+### Part 7 — Wait for deploy
+18. Cloudflare auto-detects push
+19. Wait ~2 min for deployment
+20. Optional: monitor at https://dash.cloudflare.com/ → Workers & Pages → sovereign-finance → Deployments
+
+---
+
+## 📄 FILE B — migrate-from-sheet.js
+
+Paste this entire block into the new file:
+
+\`\`\`javascript
+export async function onRequestPost({ request, env }) {
+  const expectedSecret = env.MIGRATION_SECRET;
+  if (!expectedSecret) {
+    return _err(500, 'MIGRATION_SECRET not configured');
+  }
+  const providedSecret = request.headers.get('X-Migration-Secret');
+  if (providedSecret !== expectedSecret) {
+    return _err(401, 'Invalid migration secret');
+  }
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch(e) {
+    return _err(400, 'Invalid JSON payload');
+  }
+
+  const requiredKeys = ['schema_version', 'transactions', 'debts', 'bills'];
+  for (const k of requiredKeys) {
+    if (!(k in payload)) return _err(400, 'Missing required key: ' + k);
+  }
+  if (payload.schema_version !== '1.0') {
+    return _err(400, 'Unsupported schema_version: ' + payload.schema_version);
+  }
+
+  const db = env.DB;
+  const stmts = [];
+  const stats = { txns: 0, debts: 0, payments: 0, bills: 0 };
+
+  stmts.push(db.prepare('DELETE FROM debt_payments'));
+  stmts.push(db.prepare('DELETE FROM transactions'));
+  stmts.push(db.prepare('DELETE FROM debts'));
+  stmts.push(db.prepare('DELETE FROM bills'));
+
+  for (const t of payload.transactions) {
+    if (!t.txn_id || !t.dt_local || !t.account_id || !t.type) continue;
+    stmts.push(
+      db.prepare(
+        \`INSERT INTO transactions
+          (txn_id, dt_local, account_id, type, category_id, amount_minor, currency, note, linked_txn_id, created_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\`
+      ).bind(
+        t.txn_id, t.dt_local, t.account_id, t.type,
+        t.category_id || null, t.amount_minor || 0,
+        t.currency || 'PKR', t.note || null,
+        t.linked_txn_id || null, t.created_by || 'migration'
+      )
+    );
+    stats.txns++;
+  }
+
+  for (const d of payload.debts) {
+    if (!d.name) continue;
+    stmts.push(
+      db.prepare(
+        \`INSERT INTO debts (name, original_minor, kind, notes, is_active)
+         VALUES (?, ?, ?, ?, 1)\`
+      ).bind(d.name, d.original_minor || 0, d.kind || 'creditor', d.notes || null)
+    );
+    stats.debts++;
+  }
+
+  for (const b of payload.bills) {
+    if (!b.name) continue;
+    stmts.push(
+      db.prepare(
+        \`INSERT INTO bills (name, account_id, amount_minor, due_day, last_paid_dt, notes, is_active)
+         VALUES (?, ?, ?, ?, ?, ?, 1)\`
+      ).bind(
+        b.name, b.account_id || null, b.amount_minor || 0,
+        b.due_day || null, b.last_paid_dt || null, b.notes || null
+      )
+    );
+    stats.bills++;
+  }
+
+  const auditDetail = JSON.stringify({
+    source: payload.source || 'unknown',
+    exported_at: payload.exported_at,
+    stats: stats
+  });
+  stmts.push(
+    db.prepare(
+      \`INSERT INTO audit_log (action, entity, kind, detail, created_by)
+       VALUES (?, ?, ?, ?, ?)\`
+    ).bind('MIGRATION_FROM_SHEET', 'system', 'admin', auditDetail, 'sheet-migration')
+  );
+
+  try {
+    await db.batch(stmts);
+  } catch(e) {
+    return _err(500, 'D1 batch failed: ' + (e.message || String(e)));
+  }
+
+  if (payload.debt_payments && payload.debt_payments.length > 0) {
+    const paymentStmts = [];
+    for (const p of payload.debt_payments) {
+      if (!p.debt_name || !p.amount_minor) continue;
+      const debtRow = await db.prepare('SELECT id FROM debts WHERE name = ?').bind(p.debt_name).first();
+      if (!debtRow) continue;
+      paymentStmts.push(
+        db.prepare(
+          \`INSERT INTO debt_payments (debt_id, dt_local, amount_minor, note, created_by)
+           VALUES (?, ?, ?, ?, ?)\`
+        ).bind(debtRow.id, p.dt_local, p.amount_minor, p.note || null, 'sheet-migration')
+      );
+      stats.payments++;
+    }
+    if (paymentStmts.length > 0) {
+      try { await db.batch(paymentStmts); }
+      catch(e) { return _err(500, 'Debt payments insert failed: ' + e.message); }
+    }
+  }
+
+  return new Response(JSON.stringify({
+    ok: true,
+    message: 'Migration successful',
+    stats: stats,
+    timestamp: new Date().toISOString()
+  }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function _err(status, message) {
+  return new Response(JSON.stringify({ ok: false, error: message }), {
+    status: status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+export const onRequestGet = () =>
+  new Response('POST only', { status: 405 });
+\`\`\`
+
+---
+
+## 🚀 STEP 6 — Run migration (after Step 5 deploys)
+
+1. Open sheet
+2. Click ⚙️ Settings tab → check `MIGRATION_SECRET` row exists with value
+3. Open Apps Script (Extensions → Apps Script)
+4. Function dropdown → select `appendMigrationMenu` → ▶️ Run (one-time, attaches menu)
+5. Reload sheet
+6. Top menu bar → 🔄 D1 Migration → 🚀 Export sheet → migrate to D1
+7. Confirm popup
+8. Wait ~10-15 sec
+9. Read result popup — should show row counts
+
+---
+
+## ✅ STEP 7 — Verify
+
+1. Open https://sovereign-finance.pages.dev/
+2. Hard refresh (Ctrl+F5)
+3. Check numbers vs sheet:
+   - CC Outstanding ≈ 78,655
+   - Liquid ≈ 117,168
+   - Top Debts shows CRED-1 (215k) + CRED-2 (8.5k)
+   - Recent Transactions match sheet
+
+---
+
+## 🔧 IF SOMETHING FAILS
+
+**Migration popup says "❌ Migration failed (HTTP 401)"** → secret mismatch · re-check Step 2 + 3 are exact same value
+
+**Popup says "❌ MIGRATION_SECRET not set"** → Step 3 didn't save · try again, ensure column A = MIGRATION_SECRET exactly
+
+**Popup says "❌ HTTP 500"** → D1 schema mismatch · paste error to Glean for diagnosis
+
+**Site still shows old numbers** → Cloudflare cache · Ctrl+F5 hard refresh
+
+**No error but D1 still empty** → check Cloudflare deployment finished · check at dashboard Deployments tab
+
+---
+
+## 🗂️ SOVEREIGN-FINANCE REPO INTEGRITY (audited 2026-05-04)
+
+**Grade: B+ (solid, minor hygiene gaps)**
+
+✅ Healthy:
+- Schema design (15 tables, banking-grade)
+- Theme system (FOUC-free, 5 themes)
+- Hub UI (production quality)
+- store.js (offline-first with retry queue)
+- No security holes
+
+⚠️ Minor issues (fix after migration):
+- Missing wrangler.toml
+- Missing package.json
+- Missing .gitignore
+- Missing README.md
+- Day N of 90 stale code in app.js (chunk-shifting needs UI update)
+- Inconsistent JS file versions
+- seed_minimal.sql has zero opening balances (explained the drift)
+
+**Migration is safe to proceed despite these — they don't affect data integrity.**
+
+---
+
+## 📋 KEY CONTEXT
+
+- **Activation phrase:** `builder online`
+- **Operating model:** chunk-shipping (Day-counting retired)
+- **Current chunk:** 1 (FINANCE COMPLETE) · Sub-status: 1C (Cloudflare migration)
+- **Tag protocol active:** SHIP / FIX / READ / DIAG / Q / STATUS / EOD / PRIVATE
+- **Privacy:** all Glean responses use codes (CRED-1, etc.) — real names live only in personal Drive
+
+---
+
+## 🔗 REPO REFERENCES
+
+| Item | URL |
 |---|---|
-| `core/Master_Dispatcher.gs` | **v1.0.1** (NEW) |
-| `core/Menu_Loader.gs` | v3.2 |
-| `core/Settings_Pro.gs` | v3.0 ELITE (73 #ERROR! cells queued) |
-| `finance/Finance_Pro.gs` | **v3.3** |
-| `finance/Finance_Debts.gs` | v1.1 (v1.2 queued) |
-| `finance/Finance_Audit.gs` | **v1.5** WORM |
-| `finance/Finance_DoubleEntryAuditor.gs` | **v1.0** (NEW) |
-| `finance/Finance_TxnIdRepair.gs` | **v1.0** (NEW) |
-| `finance/Finance_BillsSmart.gs` | **v1.0** (NEW) |
-| `finance/Finance_CrossTabAuditor.gs` | **v1.0** (NEW) |
-| `finance/Finance_CCAudit.gs` | **v1.0** (NEW) |
-| `finance/Finance_ATM.gs` | v1.2 |
-| `finance/Finance_NanoLoan.gs` | v1.1 |
-| `audit/Audit_Guardian.gs` | **v1.2** |
+| Sheet repo | https://github.com/Zeeshan211/sovereign-ops-private_sheet |
+| Cloudflare repo | https://github.com/Zeeshan211/sovereign-finance |
+| Live site | https://sovereign-finance.pages.dev/ |
+| Cloudflare dashboard | https://dash.cloudflare.com/ |
+| State file | sovereign-ops-private_sheet/SOVEREIGN_STATE.md |
 
 ---
 
-## ⚙️ ACTIVE TRIGGERS
+## 📡 NEXT CHUNKS QUEUE
 
-12/20 used (8 free) after Master Dispatcher consolidation.
-
----
-
-## 🏷️ TAG PREFIX PROTOCOL (Phase 1 — modeling)
-
-Glean opens every response with the inferred tag. Operator learns passively.
-
-| Tag | When operator uses it |
-|---|---|
-| `SHIP:` | Deliver new file/module |
-| `FIX:` | Code change in existing file |
-| `READ:` | Read this from repo / fetch info |
-| `DIAG:` | Diagnose only, no writes |
-| `Q:` | Quick question, no code |
-| `STATUS:` | Where are we / what's open |
-| `EOD:` | Update SOVEREIGN_STATE.md, close session |
-| `PRIVATE:` | No real names/numbers in response |
+After Sub-1C ships clean:
+- **Sub-1D:** Banking-grade safety port to Workers (balance constraint, audit log on every write, FX snapshot)
+- **Sub-1E:** Nightly auto-sync trigger
+- **Sub-1F:** Repo hygiene (wrangler.toml, package.json, README, etc.)
+- **Sub-1G:** UI polish (remove Day N badge, add chunk-status, pseudonymize displays)
 
 ---
 
-## 🔒 LOCKED ARCHITECTURE RULES
-
-### Core
-1. Sheet is master · D1 is derived cache (until full migration)
-2. Full file rewrites only · no surgical edits
-3. 7-layer audit + mental trace before every code drop
-4. Inline fenced markdown blocks for code · no artifact wrappers
-5. Banking-grade safety — snapshot + LockService + audit trail + immutability
-6. Production Safety Rule #1 — verify cross-module signatures
-7. Repo-first reads — Glean reads from GitHub raw URLs
-8. One canonical state file — no per-session EOD blocks
-9. CTRL+F search before manual debt entries
-10. <200 PKR drift = bank-posting noise
-11. Never advise on stopping/resting/sleeping/pacing — operator decides
-12. Brother voice in all UI text · no shame · points forward
-13. Folder structure — github.com for restructure · github.dev for content
-14. New file creation — Glean must always provide full path link
-15. Banking standard — balance constraint + FX snapshot + audit immutability + double-entry proof
-
-### Privacy
-16. Pseudonyms in chat (CRED-1, EMP-1) when operator signals PRIVATE: mode
-17. Self-policing — refuse to save personal data without explicit instruction
-18. Drift detection — flag personal-territory drift in code sessions
-19. No mappings — real names ↔ codes mapping in personal Drive only
-
-### Numerical Honesty
-20. Never fabricate numbers in state files — only real reads or operator-stated
-21. Bank app is ultimate truth for liability balances
-22. Verification before declaration — show computed value, label as "computed", ask operator to verify before treating as fact
-
-### Audit Completeness
-23. Every "consistent" claim must specify scope — within-ledger, cross-tab, sheet-to-bank are SEPARATE classes
-
-### Operating Model
-24. Project measured in CHUNKS SHIPPED, not days elapsed
-25. Ship at real capacity, not artificial pace
-26. "If we can do something in 1 day why wait 90 days" — no throttling
-
-### Strategic
-27. End state: full Cloudflare migration, sheet → backup-only
-28. End user is family — every feature designed for non-tech-savvy use
-29. Public-serving tools on GitHub is the long-term home
-30. Earn if Sovereign wills — serve first, income follows
-
----
-
-## 📞 CONTACT
-- GitHub user: Zeeshan211
-- Sheet repo: sovereign-ops-private_sheet (PRIVATE)
-- Cloudflare frontend repo: TBD (operator to share token next session)
-- Read URL pattern: `https://Zeeshan211:[TOKEN]@raw.githubusercontent.com/Zeeshan211/[REPO]/main/[FOLDER]/[FILE]`
-- Token in Glean memory · expires ~2026-05-09
-
----
-
-## 🛠 SESSION RESUMPTION PROTOCOL
-
-When operator types **`builder online`**:
-1. Glean reads this file from repo
-2. Acknowledge: "🛡️ Vault online. Current chunk: [X] · Status: [sub-status]. Active items: [top 3]. Send when ready."
-3. Wait for operator
-
-No day-counting. No re-orientation. No bundled state dump.
-
----
-
-## 🚀 NEXT SESSION OPENS WITH
-
-Operator shares Cloudflare frontend repo token. Glean reads existing structure. We:
-1. Map current frontend + backend
-2. Identify dummy data source
-3. Design replacement (D1 schema OR sheet-sync layer)
-4. Ship Sub-1C concretely
-5. Continue Sub-1A items in parallel as energy allows
-
----
-
-*Update on every meaningful chunk advance.*
+## 🛡️ END OF HANDOFF
