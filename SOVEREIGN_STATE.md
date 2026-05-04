@@ -1,6 +1,6 @@
 # SOVEREIGN OPS — STATE FILE
 
-**Last updated:** 2026-05-04 EOS (late evening / session end)
+**Last updated:** 2026-05-04 EOS (late evening / second session)
 **Activation:** "builder online" → Glean reads this file + acks
 
 ---
@@ -8,8 +8,8 @@
 ## CURRENT CHUNK
 
 **Chunk 1 — FINANCE COMPLETE** · Status: in progress
-**Active sub-chunk:** Sub-1D-3c (Add/Edit Debt) · STUCK on F3 frontend rendering
-**Next session FIRST action:** Operator pastes F12 console logs from /debts.html?bust=N — Glean diagnoses from the v0.4.2 instrumentation
+**Active sub-chunk:** Sub-1D-3c (Add/Edit Debt) · F3 ✅ done · F4 (Add Debt form) NEXT
+**Next session FIRST action:** Glean ships debts.js v0.4.4 + debts.html patch — Add Debt modal HTML + JS handler wiring to live POST /api/debts (backend already verified)
 
 ---
 
@@ -39,37 +39,17 @@
 - https://sovereign-finance.pages.dev/api/debts → 6 debts, total_owe 123,500 ✅
 - https://sovereign-finance.pages.dev/api/debts/debt_cred_2 → single ✅
 
----
+### Sub-1D-3c F3 — DONE + verified live (NEW THIS SESSION)
+1. `js/debts.js` v0.4.3 shipped — full file rewrite per rule #14
+2. Bug fix: ID mismatch (#total-owe → #debts-total-owe, #snowball-order removed, container IDs corrected for kind=owe → #debts-owe-list, kind=owed → #debts-owed-list)
+3. Pay modal wired to live POST /api/debts/{id}/pay (smoke-tested ✅ on CRED-1 + CRED-2 — modal opens, fields populate, accounts dropdown loads from window.store.cachedAccounts, today's date prefilled, cancel works)
+4. Mini-row pattern reused from hub.js v0.7.4 (design-system class compliance per rule #10)
+5. Sort: snowball_order ASC if backend provides, else by remaining DESC fallback
 
-## ⚠️ STUCK POINT (resume here next session)
+**Sequence used to land it:** instrumentation (v0.4.2 verbose console.log) → operator paste of [debts] runtime trace → Glean diagnosis from trace → read existing debts.html for true ID set → read hub.js v0.7.4 for proven row pattern → ship v0.4.3 ID-mapped rewrite. **Single-shot fix once truth from runtime was visible.**
 
-### Sub-1D-3c F3 — debts.html frontend not rendering data
-
-**Symptom:**
-- /debts.html shows `loading…` and `—` placeholders
-- "+ Add" buttons inject correctly into section headers
-- API works fine in incognito (verified 6 debts returned)
-- BUT data never paints — page stays in initial state
-
-**What we know:**
-- API is healthy (verified directly in incognito)
-- store.js loads before debts.js (script order verified in HTML)
-- store.js has `cachedDebts: []` by default — no race condition
-- injectAddButtons() runs successfully (operator sees + Add buttons)
-- loadAll() either fails silently OR throws after injectAddButtons
-
-**Last shipped:** `js/debts.js` v0.4.2 with verbose console.log instrumentation throughout init/load/render. Each step logs `[debts] step description`.
-
-**Next session first action:**
-1. Operator opens https://sovereign-finance.pages.dev/debts.html?bust=N in incognito
-2. Operator presses F12 → Console tab
-3. Operator pastes ALL `[debts]` log lines into chat
-4. Glean diagnoses exact failure point from the trace
-5. Glean ships v0.4.3 surgical fix (full file rewrite per locked rule #14) targeting only the identified bug
-6. Lock Sub-1D-3c
-7. Move to Sub-1D-3b (Mark Bill Paid) OR Sub-1C-REPLAY per operator pick
-
-**Honest peer note:** v0.4.0 → v0.4.1 → v0.4.2 progression has been frustrating. The actual bug is likely simple (a typo, a wrong selector, or a silent throw) but my diagnoses keep being wrong because I haven't seen the actual runtime trace. v0.4.2 will fix that — once we see the logs, the fix is single-shot.
+### Delivery Order Rule LOCKED (NEW THIS SESSION)
+Per operator directive: every code/file ship from now on must lead with SHIP IT baby steps at the top of the response, then 7-LAYER AUDIT, then full code, then deferred-scope notes. URLs in baby steps must be verified via glean_document_reader before sending. (See Active Principles #18.)
 
 ---
 
@@ -87,9 +67,11 @@
 | 1D-2d — Reverse | ✅ done | atomic + audit + debt restore |
 | 1D-2e — Snapshots UI | ✅ done | /snapshots.html |
 | 1D-3a — Transfer atomic pair | ✅ done | new entries paired (historical still single-row → 1C-REPLAY) |
-| **1D-3-RESHIP** | ✅ **done + verified live** | foundation re-locked, verify protocol activated |
-| **1D-3c backend** | ✅ **done** | full CRUD + pay endpoint live |
-| **1D-3c frontend** | ⚠️ **STUCK** | debts.html not rendering (see Stuck Point above) |
+| 1D-3-RESHIP | ✅ done + verified live | foundation re-locked, verify protocol activated |
+| 1D-3c backend | ✅ done | full CRUD + pay endpoint live |
+| **1D-3c F3 (debts.html render)** | ✅ **done + verified live** | debts.js v0.4.3 — IDs mapped, Pay modal wired, smoke-tested |
+| **1D-3c F4 (Add Debt form)** | **⏳ NEXT** | modal HTML + JS handler — backend POST already live |
+| 1D-3c F5 (Edit/Delete actions) | pending | inline row buttons → PUT/DELETE — backend already live |
 | 1D-3b — Mark Bill Paid | pending | |
 | 1D-3d — Add/Edit Bill | pending | |
 | 1D-3e — Add/Edit Account | pending | |
@@ -102,13 +84,13 @@
 ## REPO MAP — sovereign-finance (verified 2026-05-04 EOS)
 
 ### Pages (8)
-index.html · add.html · transactions.html · debts.html (v0.3.1 — JS not painting yet) ·
+index.html · add.html · transactions.html · debts.html (v0.3.1 — rendering live) ·
 bills.html · accounts.html · salary.html · audit.html · snapshots.html
 
 ### JS in /js/
 app.js · store.js (v0.0.10) · theme.js · numbers.js · hub.js (v0.7.4) ·
 add.js (v0.1.0) · transactions.js (v0.7.1) ·
-**debts.js (v0.4.2 — instrumented for diagnosis)** ·
+**debts.js (v0.4.3 — production, IDs mapped, Pay wired)** ·
 bills.js · accounts.js · salary.js · audit.js · snapshots.js
 
 **Missing (queued for repo hygiene later):** js/nav.js, /api/categories, /api/goals, /api/budgets, /api/reconciliation, wrangler.toml, package.json, .gitignore, _headers, _redirects, migrations/ folder
@@ -136,6 +118,8 @@ ONE FILE PER CALL.
 - Sheet: `https://Zeeshan211:[TOKEN]@raw.githubusercontent.com/Zeeshan211/sovereign-ops-private_sheet/main/[FOLDER]/[FILE]`
 - Cloudflare: `https://Zeeshan211:[TOKEN]@raw.githubusercontent.com/Zeeshan211/sovereign-finance/main/[PATH]`
 
+**Cache-bust pattern:** append `?cb=YYYYMMDDx` to defeat GitHub raw cache (~5min). The first read after a commit may return stale cached version — always cache-bust on critical reads. Pattern proved this session (initial activation read returned stale Sub-1C state; cache-busted read returned current Sub-1D-3c state).
+
 Token expires ~2026-06-04. Operator regenerates ~30 days before expiry.
 
 ---
@@ -157,8 +141,9 @@ Token expires ~2026-06-04. Operator regenerates ~30 days before expiry.
 13. Verify-after-deploy protocol — wait 90 sec + hit /api/X?bust=N in incognito + confirm shape BEFORE moving to next file
 14. Full file rewrites only — NO surgical edits, ever, regardless of how small the change
 15. One file per turn going forward — no more multi-file marathons
-16. **NEW: Read existing target file BEFORE writing any new file that depends on it (HTML before JS, JS before HTML changes, etc.)**
-17. **NEW: When stuck on a render bug, ship instrumented version with console.log checkpoints BEFORE attempting another rewrite. Truth from runtime > guesses from reading code.**
+16. Read existing target file BEFORE writing any new file that depends on it (HTML before JS, JS before HTML changes, etc.)
+17. When stuck on a render bug, ship instrumented version with console.log checkpoints BEFORE attempting another rewrite. Truth from runtime > guesses from reading code.
+18. **NEW: Delivery Order Rule** — every ship leads with SHIP IT baby steps at the TOP of the response, then 7-LAYER AUDIT, then full code, then deferred-scope notes. Operator acts immediately on ship instructions; audit + code are reference material below. URLs in baby steps must be verified via glean_document_reader before sending.
 
 ---
 
@@ -170,15 +155,17 @@ Token expires ~2026-06-04. Operator regenerates ~30 days before expiry.
 - GitHub raw URL (~5 min cache) + Cloudflare edge (~5-15 min cache) made commits APPEAR to revert
 - They never actually reverted — verification was reading wrong cache layer
 - Fix: verify via incognito + ?bust=N on /api/X URL, NOT via glean_document_reader after commits
+- **Also applies to SOVEREIGN_STATE.md reads** — first activation-read may return stale; cache-bust mandatory on critical state reads
 
 **Pattern 2 — Cloudflare Pages routing collision (resolved):**
 - Both `debts.js` and `debts/[[path]].js` existed → catch-all greedily ate base /api/debts → 400
 - Fix: deleted debts.js, consolidated everything into [[path]].js
 
-**Pattern 3 — Frontend ID mismatch (currently stuck on this for debts.html):**
+**Pattern 3 — Frontend ID mismatch (resolved this session):**
 - Original HTML uses ID set A, new JS targets ID set B → renders nothing
-- Fix attempted: read HTML first, write JS to match those IDs
-- Still not painting → unknown cause, instrumented in v0.4.2 to find truth from runtime
+- v0.4.0 → v0.4.1 → v0.4.2 progression: I kept guessing the bug from reading code
+- Resolution path: shipped v0.4.2 with verbose console.log instrumentation → operator pasted runtime trace → trace immediately showed every selector resolving to false → read actual debts.html for true IDs + read hub.js v0.7.4 for proven row pattern → v0.4.3 single-shot rewrite mapped to real IDs
+- **Lesson: Truth from runtime > guesses from reading code. Rule #17 paid for itself.**
 
 ---
 
@@ -187,12 +174,12 @@ Token expires ~2026-06-04. Operator regenerates ~30 days before expiry.
 Activation phrase: type **"builder online"**
 
 Glean acks with chunk + sub-chunk position. First action:
-1. Operator opens https://sovereign-finance.pages.dev/debts.html?bust=N in incognito
-2. Operator F12 → Console → pastes `[debts]` log lines
-3. Glean diagnoses + ships v0.4.3 surgical fix (full file rewrite)
-4. Verify Sub-1D-3c renders correctly
-5. Lock Sub-1D-3c
-6. Operator picks next: 1D-3b (Mark Bill Paid) · 1D-3d (Add/Edit Bill) · 1D-3e (Add/Edit Account) · 1C-REPLAY (fix historical transfer pairs)
+1. Glean ships **debts.js v0.4.4 + debts.html patch** — Add Debt form (Sub-1D-3c F4)
+   - New modal in debts.html (mirrors payModal structure: name, original_amount, kind dropdown, optional notes)
+   - + Add buttons in section headers wired to open the new modal (currently placeholder alert)
+   - POST /api/debts → on success, reload list (backend live, verified)
+2. Verify F4 lands clean (smoke test: add a fake "TEST DEBT 1" → verify renders → DELETE via D1 console)
+3. Operator picks: 1D-3c F5 (Edit/Delete actions) · 1D-3b (Mark Bill Paid) · 1D-3d (Add/Edit Bill) · 1D-3e (Add/Edit Account) · 1C-REPLAY (fix historical transfer pairs)
 
 ---
 
@@ -202,4 +189,4 @@ This file is the single source of truth. Activation phrase RELOADS it every sess
 
 Updated by: Glean (peer mode)
 Witnessed by: operator confirmation at session end
-Next state save: end of next session OR after Sub-1D-3c locks (whichever first)
+Next state save: end of next session OR after Sub-1D-3c F4 locks (whichever first)
