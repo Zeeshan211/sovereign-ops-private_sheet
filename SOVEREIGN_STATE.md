@@ -1,6 +1,6 @@
 # SOVEREIGN OPS — STATE FILE
 
-**Last updated:** 2026-05-04 EOS (Sub-1D-3e LOCKED — full 1D-3 CRUD trifecta complete)
+**Last updated:** 2026-05-04 EOS (1C-REPLAY LOCKED — Chunk 1 nearing completion)
 **Activation:** "builder online" → Glean reads this file + acks
 
 ---
@@ -8,47 +8,45 @@
 ## CURRENT CHUNK
 
 **Chunk 1 — FINANCE COMPLETE** · Status: in progress
-**Active sub-chunk:** Sub-1D-3e (Accounts CRUD) ✅ **FULLY DONE** — full 1D-3 CRUD trifecta complete (debts ✅ + bills ✅ + accounts ✅)
+**Active sub-chunk:** 1C-REPLAY ✅ **DONE** (smaller scope than expected — see RCA)
 **Next session FIRST action:** operator picks next sub-chunk:
-  - **1C-REPLAY** — fix historical transfer pairs + cash -1 anomaly (long-standing P1, recommended next)
-  - **1D-4 series start** — goals · budgets · USD/PKR · salary detect · CC validation
+  - **1D-4 series** — goals · budgets · USD/PKR · salary detect · CC validation
   - **1D-5 series** — Intl FX · ATM pairing · merchants · reconciler · repo hygiene
 
-Glean's recommendation: **1C-REPLAY next** — historical data integrity (transfer pair backfill + cash -1 reconciliation) blocks accurate reporting downstream. Best done now while context is fresh on 1D-3 patterns.
+Glean's recommendation: **start 1D-4 series** — finishing financial features (goals/budgets) before utility polish (1D-5) gives the operator more usable surface area faster. Specifically: **Goals + Budgets first** (already have D1 tables seeded with 4+11 entries, just need API + UI).
 
 ---
 
-## ✅ TODAY'S SESSION WINS (2026-05-04 — combined six sessions)
+## ✅ TODAY'S SESSION WINS (2026-05-04 — combined seven sessions)
 
 ### Sub-1D-3-RESHIP — DONE
 6 files re-shipped + verified live.
 
 ### Sub-1D-3c (Add/Edit/Delete Debt) — FULLY DONE
-- F3 (render): debts.js v0.4.3
-- F4 (Add): debts.html v0.3.2 + debts.js v0.4.4 + Pay date bug fix
-- F5 (Edit/Delete): debts.html v0.3.3 + debts.js v0.4.5
 
 ### Sub-1D-3b + 3d (Bills CRUD) — FULLY DONE
-- Backend: `bills/[[path]].js` v0.2.0 (full CRUD + pay)
-- Frontend: bills.html v0.9.0 + bills.js v0.9.0
-- Old `bills.js` was already absent (Principle #21 verification saved a wasted ship)
 
-### Sub-1D-3e (Accounts CRUD) — FULLY DONE (NEW THIS SESSION)
-- **Schema migration:** Added `status`, `deleted_at`, `archived_at` columns to accounts table (atomic backup → ALTER → backfill → verify, all 11 accounts active post-migration)
-- **Backend Ship 2:** `accounts/[[path]].js` v0.2.0 — full CRUD + Archive + Unarchive endpoints with FK-safe smart Delete
-- **Backend Ship 2.1 (bug fix):** v0.2.1 — kind enum corrected (cc not credit_card, wallet not ewallet); net worth fix (was overstated by ~157k due to wrong CC categorization). Caught by verify-after-deploy step. Pattern 4 by me.
-- **Old file delete:** `functions/api/accounts.js` v0.0.7 deleted (Principle #21 verified existence first; Pattern 2 risk was real this time vs bills where it was absent)
-- **Frontend HTML:** `accounts.html` v0.6.0 — Day-N badge retired, Add modal, Edit modal (with Archive + Delete buttons inside), Archived section toggle
-- **Frontend JS:** `accounts.js` v0.6.0 — wired Add/Edit/Archive/Unarchive/Delete · ✏️ buttons per row · 409 FK-refs handler auto-offers Archive fallback · live summary text · session-cache for archived listing (backend doesn't list archived yet)
+### Sub-1D-3e (Accounts CRUD) — FULLY DONE
+- Schema migration (status/deleted_at/archived_at columns + accounts_backup_20260504)
+- Backend v0.2.1 (kind enum bug fix mid-flight)
+- Frontend v0.6.0 (Add/Edit/Archive UI with FK-safe Delete fallback)
 
-### Schema migration safety win
-Per Principle #19 (no-live-ledger-test), schema migration is mandatory-test territory. Used baby-step pattern: backup table first → additive ALTERs only (no drops/renames) → backfill defensive → verify schema → verify data. All 11 accounts intact post-migration. Backup table `accounts_backup_20260504` retained for safety.
+### 1C-REPLAY — DONE (NEW THIS SESSION)
+- **Diagnostic finding:** pair backfill NOT needed (all 10 transfer txns already had linked_txn_id from Sub-1D-3a)
+- **Real issue identified:** cash -1 anomaly was smoke-test pollution from past sessions (predates Principle #19 lock)
+- **Cleanup executed (Q1-5 baby-step pattern):**
+  - Q1: snapshot `transactions_backup_20260504_1c_replay` (104 rows)
+  - Q2: verify snapshot OK (104 rows)
+  - Q3: DELETE 9 smoke-test rows (3 chains: Rs 1 reversal, Rs 50 reversal, Rs 100 transfer)
+  - Q4: audit_log entry `cleanup-1c-replay-smoketest-20260504`
+  - Q5: verify cash trail now ends at **0** ✅
+- **Ambiguous row kept:** TXN-20260503-192349-32150 (Rs 50 expense, no notes) — operator can revisit later
+- **Net worth correction:** 331,270 → 331,271 (Rs +1)
 
-### Pattern 7 — assumed enum values without reading data (NEW lesson, captured)
-Bug in accounts/[[path]].js v0.2.0: I assumed kind values would be `credit_card` and `ewallet` based on common conventions. Actual D1 values were `cc` and `wallet`. Result: net worth overstated by 157k (CC added to assets instead of subtracted), wallet total showed 0 despite 92k in Easypaisa. Caught by verify-after-deploy ONLY because totals math was easy to spot-check. **Lesson: when introducing/touching enum-driven logic, query D1 first for the canonical values: `SELECT DISTINCT kind FROM accounts;` — never assume.**
-
-### Pattern 8 — GitHub edit URL bracket encoding (NEW, captured)
-GitHub's `/edit/main/path/[[path]].js` 404s because raw brackets break URL parsing. Must encode: `[` → `%5B`, `]` → `%5D`. Affects all catch-all route files: `debts/[[path]].js`, `bills/[[path]].js`, `accounts/[[path]].js`, and any future ones. Working pattern: `/edit/main/functions/api/accounts/%5B%5Bpath%5D%5D.js`
+### Three Open Anomalies — STATUS UPDATE
+- Cash -1 → ✅ RESOLVED (was smoke pollution, not real)
+- Historical transfer pairs → ✅ RESOLVED (none unlinked, Sub-1D-3a covered all)
+- Bills with null due_day → STILL OPEN (operator action via Edit modal when ready, not blocking)
 
 ---
 
@@ -56,24 +54,25 @@ GitHub's `/edit/main/path/[[path]].js` 404s because raw brackets break URL parsi
 
 | Sub-chunk | Status | Notes |
 |---|---|---|
-| 1A — Sheet hardening | ✅ done | banking-grade sheet at 100/100 |
-| 1B — SMS auto-ingest | ✅ done | Telegram bot + bank/CC parsing |
-| 1C — D1 migration | ✅ done | 99 txns + 11 acc + 6 debts + 6 bills |
-| 1D-1a — Safety schema | ✅ done | 4 tables: audit_log, snapshots, snapshot_data, reconciliation |
+| 1A — Sheet hardening | ✅ done |
+| 1B — SMS auto-ingest | ✅ done |
+| 1C — D1 migration | ✅ done |
+| 1D-1a — Safety schema | ✅ done |
 | 1D-2a — Categories/goals/budgets | ✅ done | 30+4+11 seeded |
-| 1D-2b — Audit infrastructure | ✅ done | _lib + audit + snapshots APIs |
-| 1D-2c — Add Txn form | ✅ done | /add.html |
-| 1D-2d — Reverse | ✅ done | atomic + audit + debt restore |
-| 1D-2e — Snapshots UI | ✅ done | /snapshots.html |
-| 1D-3a — Transfer atomic pair | ✅ done | new entries paired (historical → 1C-REPLAY) |
-| 1D-3-RESHIP | ✅ done + verified live | foundation re-locked |
-| Sub-1D-3c (Debts CRUD) | ✅ FULLY DONE | full CRUD + pay live |
-| Sub-1D-3b + 3d (Bills CRUD) | ✅ FULLY DONE | backend v0.2.0 + html v0.9.0 + js v0.9.0 |
-| **Sub-1D-3e (Accounts CRUD)** | ✅ **FULLY DONE** | schema migrated + backend v0.2.1 + html v0.6.0 + js v0.6.0 |
-| **1D-3 CRUD TRIFECTA** | ✅ **FULL LOCK** | debts ✅ + bills ✅ + accounts ✅ |
-| **1C-REPLAY — fix historical pairs + cash -1** | **⏳ NEXT (Glean's recommendation)** | P1 reconciliation |
-| 1D-4 series | pending | goals · budgets · USD/PKR · salary detect · CC validation |
+| 1D-2b — Audit infrastructure | ✅ done |
+| 1D-2c — Add Txn form | ✅ done |
+| 1D-2d — Reverse | ✅ done |
+| 1D-2e — Snapshots UI | ✅ done |
+| 1D-3a — Transfer atomic pair | ✅ done |
+| 1D-3-RESHIP | ✅ done |
+| Sub-1D-3c (Debts CRUD) | ✅ FULLY DONE |
+| Sub-1D-3b + 3d (Bills CRUD) | ✅ FULLY DONE |
+| Sub-1D-3e (Accounts CRUD) | ✅ FULLY DONE |
+| 1D-3 CRUD TRIFECTA | ✅ FULL LOCK |
+| **1C-REPLAY** | ✅ **DONE** | smoke-test cleanup, no pair backfill needed |
+| **1D-4 series** | **⏳ NEXT** | goals · budgets · USD/PKR · salary detect · CC validation |
 | 1D-5 series | pending | Intl FX · ATM pairing · merchants · reconciler · repo hygiene |
+| Chunk 1 LOCK | pending | after 1D-4 + 1D-5 complete |
 
 ---
 
@@ -81,36 +80,33 @@ GitHub's `/edit/main/path/[[path]].js` 404s because raw brackets break URL parsi
 
 ### Pages (8)
 index.html · add.html · transactions.html · debts.html (v0.3.3) · bills.html (v0.9.0) ·
-**accounts.html (v0.6.0 — Add/Edit/Archive UI)** · salary.html · audit.html · snapshots.html
+accounts.html (v0.6.0) · salary.html · audit.html · snapshots.html
 
 ### JS in /js/
 app.js · store.js (v0.1.0) · theme.js · numbers.js · hub.js (v0.7.4) ·
 add.js (v0.1.0) · transactions.js (v0.7.1) ·
-debts.js (v0.4.5) · bills.js (v0.9.0) ·
-**accounts.js (v0.6.0 — full CRUD wired + Archive flow)** ·
+debts.js (v0.4.5) · bills.js (v0.9.0) · accounts.js (v0.6.0) ·
 salary.js · audit.js · snapshots.js
-
-**Missing (queued for repo hygiene later):** js/nav.js, /api/categories, /api/goals, /api/budgets, /api/reconciliation, wrangler.toml, package.json, .gitignore, _headers, _redirects, migrations/ folder
 
 ### CSS in /css/
 app.css (design system v0.7.4 · ~2,467 lines · 5 themes)
 
 ### API in /functions/api/
 balances.js (v0.2.0) · transactions.js (v0.0.10) · transactions/reverse.js (v0.0.2) ·
-debts/[[path]].js (v0.2.0) · bills/[[path]].js (v0.2.0) ·
-**accounts/[[path]].js (v0.2.1 — full CRUD + archive/unarchive · NEW THIS SESSION)** ·
+debts/[[path]].js (v0.2.0) · bills/[[path]].js (v0.2.0) · accounts/[[path]].js (v0.2.1) ·
 audit.js · snapshots.js · _lib.js · admin/migrate-from-sheet.js (v1.1)
-**REMOVED:** Old `accounts.js` v0.0.7 (deleted this session — Pattern 2 prevention, verified existing first)
 
-### D1 tables (12 live, all migrations applied)
-**accounts** (+ status, deleted_at, archived_at — schema migrated this session) ·
-transactions (+reversed_by, reversed_at, linked_txn_id) · debts · bills (+status, deleted_at) ·
-audit_log · snapshots · snapshot_data · reconciliation ·
-categories (30) · goals (4) · budgets (11) ·
-merchants · settings (pre-existing, unused)
+### D1 tables (12 live)
+accounts (status, deleted_at, archived_at) · transactions (reversed_by, reversed_at, linked_txn_id) ·
+debts · bills (status, deleted_at) · audit_log · snapshots · snapshot_data · reconciliation ·
+categories (30) · goals (4) · budgets (11) · merchants · settings (unused)
 
 ### Backup tables (safety)
-**accounts_backup_20260504** (11 rows — pre-migration snapshot, retained for rollback safety)
+- accounts_backup_20260504 (11 rows — Sub-1D-3e migration safety)
+- **transactions_backup_20260504_1c_replay (104 rows — 1C-REPLAY safety, NEW)**
+
+### Missing (queued for repo hygiene later)
+js/nav.js, /api/categories, /api/goals, /api/budgets (← needed for 1D-4), /api/reconciliation, wrangler.toml, package.json, .gitignore, _headers, _redirects, migrations/ folder
 
 ---
 
@@ -122,7 +118,7 @@ Glean reads via `glean_document_reader` with authenticated raw URL (READ-ONLY to
 
 **Cache-bust pattern:** append `?cb=YYYYMMDDx` to defeat GitHub raw cache (~5min).
 
-**GitHub edit URLs with brackets:** must URL-encode (Principle #22). Example: `/edit/main/functions/api/accounts/%5B%5Bpath%5D%5D.js` not `/edit/main/functions/api/accounts/[[path]].js`
+**GitHub edit URLs with brackets:** must URL-encode (Principle #22). Example: `/edit/main/functions/api/accounts/%5B%5Bpath%5D%5D.js`
 
 Token expires ~2026-06-04. Operator regenerates ~30 days before expiry.
 
@@ -142,37 +138,37 @@ Token expires ~2026-06-04. Operator regenerates ~30 days before expiry.
 10. Use only existing design system classes — never invent new ones
 11. Glean is responsible peer, not yes-man — pushes back on drift
 12. Each sub-chunk lock includes parity check vs sheet
-13. Verify-after-deploy protocol — wait 90 sec + hit /api/X?bust=N in incognito + confirm shape BEFORE moving to next file
-14. Full file rewrites only — NO surgical edits, ever, regardless of how small the change
+13. Verify-after-deploy protocol — wait 90 sec + hit /api/X?bust=N in incognito + confirm shape
+14. Full file rewrites only — NO surgical edits, ever
 15. One file per turn going forward — no more multi-file marathons
-16. Read existing target file BEFORE writing any new file that depends on it (HTML before JS, JS before HTML, **API handler before JS that calls it, schema before migration, enum values from live DB before any enum-driven logic**)
+16. Read existing target file BEFORE writing any new file that depends on it (HTML before JS, JS before HTML, API handler before JS that calls it, schema before migration, enum values from live DB before any enum-driven logic)
 17. When stuck on a render bug, ship instrumented version with console.log checkpoints. Truth from runtime > guesses from reading code.
 18. Delivery Order Rule v2 — every ship: URL first → code block → commit message → deploy wait → verify URL → smoke check (only if mandatory) → 3-branch reply → audit + deferred-scope below horizontal rules.
 19. No-Live-Ledger-Test Rule — through end of Chunk 1, no smoke tests pollute real D1 data. Push back only on mandatory tests (schema migration, destructive ops without snapshot, audit_log writers, scheduled trigger first-fire).
 20. Three-Cache Diagnostic — when operator says "I don't see X", diagnose three layers in order: repo, edge, browser.
-21. State File Trust-But-Verify — SOVEREIGN_STATE.md is source of truth, BUT before destructive operations, verify actual repo/db state matches the claim.
-22. **NEW: GitHub Edit URL Bracket Encoding** — any path containing `[[name]].js` must use URL-encoded brackets in edit URLs: `[` → `%5B`, `]` → `%5D`. Applies to all catch-all routes (debts/, bills/, accounts/, future). Working pattern: `https://github.com/{org}/{repo}/edit/main/{path}/%5B%5Bname%5D%5D.js`. Auto-apply when generating edit URLs.
+21. State File Trust-But-Verify — verify actual repo/db state before destructive operations.
+22. GitHub Edit URL Bracket Encoding — `[` → `%5B`, `]` → `%5D` for any catch-all route.
 
 ---
 
 ## RCA SUMMARY — 2026-05-04 SESSIONS
 
 **Pattern 1 — Stale cache cascade:** Verify via incognito + ?bust=N.
-**Pattern 2 — Cloudflare Pages routing collision:** Catch-all + sibling file = base route loss. Always delete old when shipping catch-all replacement (when old exists — Principle #21 first).
+**Pattern 2 — Cloudflare Pages routing collision:** Catch-all + sibling = base route loss.
 **Pattern 3 — Frontend ID mismatch:** Truth from runtime > guesses from reading code.
-**Pattern 4 — Silent backend contract drift:** Read API handler before writing JS that calls it.
-**Pattern 5 — Browser cache as third cache layer:** Three layers exist — repo + edge + browser.
-**Pattern 6 — State file drift detection:** Verify state file claims before destructive ops.
-**Pattern 7 — Assumed enum values without reading data (NEW):** I assumed accounts.kind would be 'credit_card' + 'ewallet'; D1 actually has 'cc' + 'wallet'. v0.2.0 net worth was overstated by 157k. Caught at verify step. **Lesson: query D1 for canonical enum values BEFORE writing enum-dependent logic. `SELECT DISTINCT kind FROM accounts;` is a 1-second safeguard.**
-**Pattern 8 — GitHub edit URL bracket encoding (NEW):** Raw `[[path]].js` in edit URL → 404. Must encode brackets. Now Principle #22.
+**Pattern 4 — Silent backend contract drift:** Read API handler before writing JS.
+**Pattern 5 — Browser cache as third cache layer:** Three layers — repo + edge + browser.
+**Pattern 6 — State file drift:** Verify state file claims before destructive ops.
+**Pattern 7 — Assumed enum values without reading data:** Query D1 for canonical enum values BEFORE writing enum-dependent logic.
+**Pattern 8 — GitHub edit URL bracket encoding:** Encode brackets in catch-all paths.
+**Pattern 9 — Past-session smoke pollution accumulates (NEW, resolved this session):** Pre-Principle-#19 smoke tests left 9 orphan rows in transactions table. The cash -1 anomaly looked like a migration bug or data loss but was actually self-inflicted test debt. **Lesson: when a balance anomaly appears, FIRST grep for `notes LIKE '%test%'` / `notes LIKE '%REVERSAL%'` before assuming data corruption. Test pollution masquerades as real bugs.**
 
 ---
 
-## OPEN ANOMALIES (queued for 1C-REPLAY)
+## OPEN ANOMALIES
 
-- **Cash account balance = -1.** Mathematically impossible (cash can't be negative). Likely cause: sheet→D1 migration loss of a small entry, or reversed-transaction edge case. Surfaced 2026-05-04 during accounts CRUD verify. Action: investigate via audit_log + transactions WHERE account_id='cash' during 1C-REPLAY.
-- **Historical transfer pairs not linked.** New transfers (post-1D-3a) get linked_txn_id; historical ones don't. Reconciliation requires backfilling pair detection by matching same-date opposite-sign pairs. Standing P1.
-- **3 bills with null due_day** (Hair Cutting, Personal Hygiene, Maid). Now display "no due date set" correctly. Operator can fix via Edit modal when ready — not blocking.
+- **3 bills with null due_day** (Hair Cutting, Personal Hygiene, Maid). Display "no due date set" correctly. Operator can fix via Edit modal — not blocking.
+- **TXN-20260503-192349-32150** (Rs 50 cash expense, 5/3 19:23, no notes) — kept per option C. Operator can verify against memory of real spending and delete via D1 console if it's also test pollution. Pre-cleanup snapshot available in `transactions_backup_20260504_1c_replay`.
 
 ---
 
@@ -181,11 +177,17 @@ Token expires ~2026-06-04. Operator regenerates ~30 days before expiry.
 Activation phrase: type **"builder online"**
 
 Glean acks with chunk + sub-chunk position. Operator picks next:
-1. **1C-REPLAY** ← Glean's recommendation — fix historical transfer pairs + cash -1 anomaly
-2. **1D-4 series start** — goals · budgets · USD/PKR · salary detect · CC validation
-3. **1D-5 series** — Intl FX · ATM pairing · merchants · reconciler · repo hygiene
+1. **1D-4 series start (Glean's recommendation: Goals + Budgets first)** — D1 tables already seeded; needs `/api/goals` + `/api/budgets` catch-all backends + frontend pages
+2. **1D-5 series start** — Intl FX · ATM pairing · merchants · reconciler · repo hygiene
+3. **Chunk 1 lock prep** — fresh sheet→D1 reload + full reconcile pass (do this LAST, after all features ship)
 
-Glean's full recommendation order: 1C-REPLAY → 1D-4 series → 1D-5 series → Chunk 1 lock → fresh sheet→D1 reload + full reconcile pass.
+Glean's full recommendation order:
+1. 1D-4 Goals + Budgets (sub-chunk a + b) — closest to user-facing value
+2. 1D-4 USD/PKR support (sub-chunk c) — multi-currency
+3. 1D-4 Salary auto-detect (sub-chunk d) — quality of life
+4. 1D-4 CC validation (sub-chunk e) — banking-grade hardening
+5. 1D-5 series — utilities, reconciler, repo hygiene
+6. Chunk 1 LOCK + reconcile pass
 
 ---
 
@@ -195,4 +197,4 @@ This file is the single source of truth for plans, principles, RCA, and progress
 
 Updated by: Glean (peer mode)
 Witnessed by: operator confirmation at session end
-Next state save: end of next session OR after 1C-REPLAY locks (whichever first)
+Next state save: end of next session OR after first 1D-4 sub-chunk locks (whichever first)
