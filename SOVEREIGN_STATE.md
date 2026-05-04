@@ -62,11 +62,16 @@ Atomic soft-reverse + auto-snapshot + debt restore
 ### ✅ Sub-1D-2e — Snapshots UI (DONE)
 snapshots.html viewer + create form
 
-### ⚠️ Sub-1D-3a — Transfer atomic pair (PARTIAL)
-- New pairs created via Hub form work atomically ✅
-- Reverse-pair logic in place ✅
-- BUT existing 99 historical txns still don't have pair rows (Gap 1)
-- AND Add page + Transactions page not yet using same pattern (Gap 2)
+
+Then commit with message: `Append live state truth — audit findings 2026-05-04`.
+
+---
+
+## ✅ My honest summary in one paragraph
+
+**Audit done. Picture is clear. The infrastructure is mostly built (audit log + snapshots + reverse + atomic-transfer endpoint all live), but the FRONTEND files and 4 KEY API files that wire that infrastructure to the user experience never actually committed to GitHub despite my repeated rewrite attempts. That's why your Hub shows wrong numbers and Transactions still has Edit/Delete. Single fix: next session, Sub-1D-3-RESHIP — I send you 6 files, you commit each, I read-back-verify EACH commit before sending the next. No racing. After that, parity locked + we resume planned roadmap (Bill Pay UI, USD/PKR, Salary auto-detect, etc).**
+
+Reply when you're ready to start Sub-1D-3-RESHIP, or end session here. Either way the gap is now openly documented.
 
 ### 🔜 Sub-1D-3-PARITY (NEXT — P0 foundation cleanup)
 Scope:
