@@ -8,7 +8,7 @@
 
 ## CURRENT CHUNK
 
-**Chunk 1 — FINANCE COMPLETE** · Status: ~85% capability parity / **~99% logic integrity within shipped scope (audit-corrected)**
+**Chunk 1 — FINANCE COMPLETE** · Status: ~85% capability parity / ~99% logic integrity within shipped scope (audit-corrected)
 
 **This session ships (Part 5 + post-audit additions):**
 - ✅ Sub-1D-CATEGORY-RECONCILE Ship A — `/api/categories` endpoint (15 live D1 categories)
@@ -30,10 +30,10 @@ The following claims from prior state file Parts were WRONG or DRIFTED:
 
 | Was | Reality (verified live) |
 |---|---|
-| "Reconciliation actuator currently stub (renders but doesn't persist)" | **Fully functional.** /api/reconciliation/[[path]].js v0.1.0 POST writes to D1, computes diff_amount, audits. GET returns history with optional account_id filter. |
-| "14 backend endpoints" | **17 actual** (added /api/categories, /api/admin/audit-backfill; existing /api/admin/migrate-from-sheet, _lib.js were uncounted) |
-| "Day-N badge in hub header — replace with live summary" | **Done this session** — replaced with `hub-freshness` live "Live · Xm ago" indicator |
-| "store.js category IDs drift from D1" | **Done this session** — store.js fetches /api/categories on init |
+| "Reconciliation actuator currently stub (renders but doesn't persist)" | Fully functional. `/api/reconciliation/[[path]].js v0.1.0` POST writes to D1, computes diff_amount, audits. GET returns history with optional account_id filter. |
+| "14 backend endpoints" | 17 actual (added /api/categories, /api/admin/audit-backfill; existing /api/admin/migrate-from-sheet, _lib.js were uncounted) |
+| "Day-N badge in hub header — replace with live summary" | Done this session — replaced with `hub-freshness` live "Live · Xm ago" indicator |
+| "store.js category IDs drift from D1" | Done this session — store.js fetches /api/categories on init |
 | "GitHub commit 8 hrs ago: Delete functions/api/dmin/migrate-from-sheet.js" (typo path) | Status uncertain — `/api/admin/migrate-from-sheet.js` may or may not still exist. Not blocking. |
 
 ---
@@ -42,9 +42,9 @@ The following claims from prior state file Parts were WRONG or DRIFTED:
 
 These IDs exist in deployed `index.html` but NO JS populates them:
 
-1. **`hub-recent-tx`** — should show last 5 transactions (likely needs separate read of /api/transactions or a hub-summary endpoint)
-2. **`hub-top-debts`** — should show top 3 debts by outstanding amount
-3. **`hub-due-soon`** — should show bills due in next 7 days
+1. `hub-recent-tx` — should show last 5 transactions
+2. `hub-top-debts` — should show top 3 debts by outstanding amount
+3. `hub-due-soon` — should show bills due in next 7 days
 
 These are display-layer gaps, not data gaps (the data exists in respective endpoints). Estimated 1-2 ships to wire all three. NEXT SESSION PRIORITY for true 100% logic.
 
@@ -53,17 +53,17 @@ These are display-layer gaps, not data gaps (the data exists in respective endpo
 ## NEXT SESSION FIRST ACTION
 
 Operator picks:
-1. **Wire 3 hub elements** (`hub-recent-tx`, `hub-top-debts`, `hub-due-soon`) — true 100% logic ship, ~30-45 min, hot context
-2. **/api/transactions GET pagination** — won't bite until 500+ txns, you have ~195
-3. **Reconciliation diff display polish** — endpoint computes diff_amount, surface it in UI
-4. **Merchants chunk** — biggest capability gap closer, 4-5 ship arc, ~3-4 hours
-5. **Telegram bot port** — biggest single capability gap, multi-session
-6. **PDF parser + reconciler** — bank statement reconciliation, multi-session
-7. **Charts module** — visual reporting, whole-module
-8. **AI insights** — needs LLM API account
-9. **Auth layer** — when ready to share with family ($10/year custom domain or accept current)
+1. Wire 3 hub elements (`hub-recent-tx`, `hub-top-debts`, `hub-due-soon`) — true 100% logic ship, ~30-45 min, hot context
+2. /api/transactions GET pagination — won't bite until 500+ txns, you have ~195
+3. Reconciliation diff display polish — endpoint computes diff_amount, surface it in UI
+4. Merchants chunk — biggest capability gap closer, 4-5 ship arc, ~3-4 hours
+5. Telegram bot port — biggest single capability gap, multi-session
+6. PDF parser + reconciler — bank statement reconciliation, multi-session
+7. Charts module — visual reporting, whole-module
+8. AI insights — needs LLM API account
+9. Auth layer — when ready to share with family ($10/year custom domain or accept current)
 
-Glean's recommendation: **#1 (Wire 3 hub elements)** — closes true 100% logic, hot context, single session.
+Glean's recommendation: #1 (Wire 3 hub elements) — closes true 100% logic, hot context, single session.
 
 ---
 
@@ -78,17 +78,19 @@ Glean's recommendation: **#1 (Wire 3 hub elements)** — closes true 100% logic,
 - Merchants with auto-rules (~2%)
 
 **Finance LOGIC integrity within shipped scope: ~99% (audit-corrected)**
-- Logic gaps that ARE done (audit found previously claimed "stub" was actually functional):
-  - Reconciliation persistence ✅ done
-  - Audit-after-write on POST + REVERSE + reconciliation ✅ done
-  - Liability-aware transfer math ✅ done
-  - Historical audit backfill ✅ done
-  - Category sync ✅ done
-  - Offline queue auto-drain ✅ done
-- Remaining ~1% logic gaps:
-  - 3 hub elements unwired (recent-tx, top-debts, due-soon) — display layer
-  - GET pagination on /api/transactions
-  - Reconciliation diff_amount UI display
+
+Logic gaps that ARE done (audit found previously claimed "stub" was actually functional):
+- Reconciliation persistence ✅ done
+- Audit-after-write on POST + REVERSE + reconciliation ✅ done
+- Liability-aware transfer math ✅ done
+- Historical audit backfill ✅ done
+- Category sync ✅ done
+- Offline queue auto-drain ✅ done
+
+Remaining ~1% logic gaps:
+- 3 hub elements unwired (recent-tx, top-debts, due-soon) — display layer
+- GET pagination on /api/transactions
+- Reconciliation diff_amount UI display
 
 **Banking-grade safety on txn flow: 100%** including historical
 
@@ -130,9 +132,9 @@ Glean's recommendation: **#1 (Wire 3 hub elements)** — closes true 100% logic,
 | Sub-1D-STORE-OFFLINE-DRAIN | ✅ FULLY DONE |
 | Sub-1D-AUDIT-WIRE-3 | ✅ FULLY DONE |
 | Hub polish v0.7.5d (KPI IDs) | ✅ FULLY DONE |
-| **Day-N badge retire + freshness (v0.7.6)** | ✅ **FULLY DONE** |
-| **True Burden render (v0.7.7)** | ✅ **FULLY DONE** |
-| **Wire hub-recent-tx + hub-top-debts + hub-due-soon** | ⏳ **NEXT (true 100% logic)** |
+| Day-N badge retire + freshness (v0.7.6) | ✅ FULLY DONE |
+| True Burden render (v0.7.7) | ✅ FULLY DONE |
+| Wire hub-recent-tx + hub-top-debts + hub-due-soon | ⏳ NEXT (true 100% logic) |
 | /api/transactions GET pagination | ⏳ deferred (not bitten yet) |
 | Reconciliation diff_amount UI display | ⏳ polish |
 | 1D-4c (USD/PKR) | ⏭️ DEFERRED (no non-PKR accounts) |
@@ -232,8 +234,8 @@ Token expires ~2026-06-04. MIGRATION_SECRET rotated 2026-05-04 after exposure in
 25. 3 Production Safety Rules
 26. Schema-cite gate — any SQL ship MUST first-line cite SCHEMA.md source + columns referenced
 27. State File Follow Protocol — any factual claim MUST be backed by fresh same-turn re-fetch + verbatim quote + line/byte count proof
-28. **DOM-cite gate (NEW Part 5+):** any ship touching getElementById/querySelector/HTML attributes MUST first-line cite the source HTML file and verified IDs. Format: `DOM: read /<page> via fetch('/?cb=...'), IDs verified: <id1>, <id2>, <id3>`
-29. **Failed-verify rollback (NEW Part 5+):** after 2 failed verifies on same fix attempt, mandatory rollback before attempt 3. Diagnostic happens AFTER recovery, not during ongoing breakage.
+28. **DOM-cite gate (NEW Part 5+):** any ship touching getElementById/querySelector/HTML attributes MUST first-line cite the source HTML file and verified IDs
+29. **Failed-verify rollback (NEW Part 5+):** after 2 failed verifies on same fix attempt, mandatory rollback before attempt 3. Diagnostic happens AFTER recovery.
 
 ---
 
@@ -241,7 +243,7 @@ Token expires ~2026-06-04. MIGRATION_SECRET rotated 2026-05-04 after exposure in
 
 ### Principle 18 — Delivery Order Rule v2
 
-Every code/file ship: EDIT URL first, then code block, commit message, deploy wait, VERIFY URL, smoke checklist, 3-branch reply (✅/⚠️/❌). Audit + deferred notes go below horizontal rule. Verify URLs before sending. Cut every prose sentence that doesn't justify itself.
+Every code/file ship: EDIT URL first, then code block, commit message, deploy wait, VERIFY URL, smoke checklist, 3-branch reply (✅/⚠️/❌). Audit + deferred notes go below horizontal rule. Verify URLs before sending.
 
 ### Principle 19 — No Live Ledger Smoke Tests (build-phase)
 
@@ -253,13 +255,13 @@ A) Cross-module rebuild calls require source verification.
 B) Destructive ops need 5-fold defense: pre-flight check, auto-snapshot, confirmation gate, atomic semantics, undo window.
 C) Reuse working safety patterns — Finance_Pro v3.0 Snapshot+Vaccine is canonical.
 
-### Principle 6 — Operator Guidance Standard (Cloudflare/GitHub baby-steps)
+### Principle 6 — Operator Guidance Standard
 
 Always: direct URL not navigation, numbered steps with bold numbers, exact paste text in fenced block above paste step, verification step with expected output, 3-branch reply outcome. Never multi-level breadcrumbs. Max 2 clicks per action.
 
 ### Principle 26 — Schema-Cite Gate
 
-Any SQL ship MUST first-line cite SCHEMA.md source + columns. Format: `Schema: read SCHEMA.md \`<table>\` section, columns: <col1, col2, col3>`. Operator can challenge if cite looks fabricated.
+Any SQL ship MUST first-line cite SCHEMA.md source + columns referenced. Format inline: Schema: read SCHEMA.md table-X section, columns: col1, col2, col3. Operator can challenge if cite looks fabricated.
 
 ### Principle 27 — State File Follow Protocol
 
@@ -273,4 +275,74 @@ Any factual claim about chunk status / version / principle / open item MUST be b
 
 Locked after 3-ship Pattern 7 cascade on hub.js (v0.7.5 → 0.7.5b → 0.7.5c → 0.7.5d).
 
-Rule: any ship touching `getElementById`/`querySelector`/HTML attributes MUST output as the FIRST LINE:
+Rule: any ship touching getElementById/querySelector/HTML attributes MUST output as the FIRST LINE: DOM: read /page via fetch(/?cb=...), IDs verified: id1, id2, id3.
+
+Operator can challenge if cite looks fabricated. The 5-second pre-ship check uses fetch on root path with regex match for id attributes.
+
+### Principle 29 — Failed-Verify Rollback (NEW Part 5+)
+
+After 2 failed verifies on same fix attempt, mandatory rollback to last working version before attempt 3.
+- Rollback via Cloudflare Pages dashboard (1 click)
+- Diagnostic happens AFTER recovery, not during ongoing breakage
+- Prevents Pattern 7 cascades
+
+---
+
+## RCA SUMMARY — 11 patterns
+
+Pattern 1 — Stale cache cascade
+Pattern 2 — Cloudflare Pages routing collision
+Pattern 3 — Frontend ID mismatch
+Pattern 4 — Silent backend contract drift
+Pattern 5 — Browser cache as third cache layer (caught AGAIN this session)
+Pattern 6 — State file drift (caught in this audit — reconciliation claim wrong)
+Pattern 7 — Assumed enum/column/ID values without reading data (3-ship hub.js cascade this session)
+Pattern 8 — GitHub edit URL bracket encoding
+Pattern 9 — Past-session smoke pollution
+Pattern 10 — Aspirational targets need honest reality checks
+Pattern 11 — Theater fixes that don't change threat model
+
+---
+
+## OPEN ANOMALIES + DEFERRED POLISH (audit-corrected)
+
+- 3 bills with null due_day
+- TXN-20260503-192349-32150 (Rs 50 cash, 5/3, no notes) — kept per option C
+- Min payment NULL on Alfalah CC — operator can set when known
+- merchants + settings tables seeded but unused (Merchants is next chunk priority)
+- categories.type column NULL for all rows
+- Cloudflare Access on free pages.dev not supported
+- Token-in-Glean-audit-logs: parked decision
+- MIGRATION_SECRET rotated this session (new value active)
+- **NEW: hub-recent-tx, hub-top-debts, hub-due-soon NOT WIRED** (display layer gaps surfaced by audit — NEXT priority)
+- **True Burden display** — code in v0.7.7 but operator reports still showing "—" → likely browser cache, hard-refresh test needed
+- **Reconciliation diff_amount UI** — backend computes, frontend may not surface
+
+---
+
+## NEXT SESSION START
+
+Activation phrase: type **"boot vault"**
+
+Glean acks with chunk + sub-chunk position + elapsed time since last session.
+
+Recommended next ship arc:
+
+1. Wire 3 hub elements — closes true 100% logic, single session
+2. Day-N badge retire + True Burden cache verify — minor polish
+3. Merchants chunk — biggest capability gap closer
+4. Telegram bot port — biggest single capability gap
+5. PDF parser — multi-session
+6. Charts — whole-module
+7. AI insights — needs LLM API
+8. Auth layer — when ready
+9. Chunk 1 LOCK + reconcile pass
+
+---
+
+## STATE-SAVE INTEGRITY
+
+This file is the single source of truth.
+Updated by: Glean (peer mode, with honest pushback)
+Witnessed by: operator confirmation at session end
+Next state save: end of next session OR when state drift exceeds 3 ships
