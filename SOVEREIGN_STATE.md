@@ -209,3 +209,64 @@ If operator says "complex" / "baby steps" / "simpler" — rewrite immediately in
 Locked in memory after 2 Pattern 7 violations in Sub-1D-DEBT-TOTAL ship arc.
 
 Rule: any ship containing SQL against any table MUST output as the FIRST LINE of the message:
+
+If schema not actually verified → no ship. Operator can challenge cite if it looks wrong.
+
+SCHEMA.md is the canonical source. Update protocol: re-run `PRAGMA table_info(<table>)` and update the file whenever a migration runs.
+
+---
+
+## RCA SUMMARY — 11 patterns
+
+Pattern 1 — Stale cache cascade
+Pattern 2 — Cloudflare Pages routing collision
+Pattern 3 — Frontend ID mismatch
+Pattern 4 — Silent backend contract drift (caught AGAIN this session — store.js categories drift from D1)
+Pattern 5 — Browser cache as third cache layer
+Pattern 6 — State file drift
+Pattern 7 — Assumed enum/column values without reading data (TWO violations in Sub-1D-DEBT-TOTAL — codified Schema-Cite Gate as response)
+Pattern 8 — GitHub edit URL bracket encoding
+Pattern 9 — Past-session smoke pollution
+Pattern 10 — Aspirational targets need honest reality checks
+Pattern 11 — Theater fixes that don't change threat model
+
+---
+
+## OPEN ANOMALIES + DEFERRED POLISH
+
+- 3 bills with null due_day (operator can fix via Edit modal — not blocking)
+- TXN-20260503-192349-32150 (Rs 50 cash, 5/3 19:23, no notes) — kept per option C; backup available
+- Min payment NULL on Alfalah CC — operator can set when known via Edit modal
+- merchants + settings tables seeded but unused
+- Day-N badge in hub header — cosmetic, should be replaced with live summary
+- "11 active" hardcoded subtitle on Accounts hub card — should be dynamic
+- Historical txns from before 2026-05-04 EOS Part 2 have no audit_log rows. Backfill ship deferred.
+- Reverse button on transactions.html is 1-click with no confirmation modal.
+- **store.js category IDs drift from D1** — Sub-1D-CATEGORY-RECONCILE priority for next session. Documented in SCHEMA.md "KNOWN DRIFTS / TODO" section.
+- **categories.type column is NULL for all rows** — never populated. Limits future filtering.
+- **Cloudflare Access on free pages.dev not supported** — site stays publicly accessible by URL. Real auth requires custom domain ($10/year) or accept current state. Operator decided: accept for now.
+- **Token-in-Glean-audit-logs**: parked decision. Token sits in tool-call audit logs. Rotation is theater. Operator's call to accept exposure.
+
+---
+
+## NEXT SESSION START
+
+Activation phrase: type **"boot vault"**
+
+Glean acks with chunk + sub-chunk position. Recommended order:
+
+1. **Sub-1D-CATEGORY-RECONCILE** ← Glean's #1 (banking-grade gap, hot context)
+2. Sub-1D-STORE-OFFLINE-DRAIN — auto-replay queue
+3. Merchants with auto-rules
+4. Telegram bot port — biggest single capability gap
+5. Auth layer — when ready
+6. Polish — hub Day-N retire, dynamic accounts subtitle, audit page filter
+
+---
+
+## STATE-SAVE INTEGRITY
+
+This file is the single source of truth.
+Updated by: Glean (peer mode, with honest pushback)
+Witnessed by: operator confirmation at session end
+Next state save: end of next session OR when state drift exceeds 3 ships (whichever first)
