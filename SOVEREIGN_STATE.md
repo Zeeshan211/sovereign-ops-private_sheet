@@ -1,6 +1,7 @@
 # SOVEREIGN OPS — STATE FILE
 
 **Last updated:** 2026-05-04 EOS Part 4 (SCHEMA.md + Pattern 7 codified, schema-cite gate locked)
+**Last session ended:** 2026-05-04 23:45 PKT
 **Activation:** "boot vault" → Glean reads this file + acks
 
 ---
