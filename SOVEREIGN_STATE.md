@@ -4,6 +4,19 @@
 
 Chunk 1 — FINANCE COMPLETE
 
+## Governance
+Governance file: /SOVEREIGN_GOVERNANCE.md
+Governance version: v0.3
+Secure Boot: active
+OS version expected: v1.1
+Default mode: Normal Workday Mode
+Off-day mode: Tuesday/Wednesday Sprint, up to 20 ships/day
+Shift window: 4 PM - 1 AM PKT
+Timing mechanism: automatic timestamp anchor; operator time only if ambiguous
+Enforcement stack: OS + Governance + State + Session Control Card
+Boot rule: boot vault is a public wake word, not authentication
+No-peek rule: no state revealed before identity + fresh authorization pass
+
 ## Current Status
 
 Cloudflare finance app is live behind Cloudflare Access. Layer 5B ATM, Layer 5C Nano Loans, and Layer 5D Reconciliation received verified updates in this session.
