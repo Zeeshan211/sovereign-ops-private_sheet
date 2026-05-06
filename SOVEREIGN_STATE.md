@@ -1,106 +1,87 @@
-## Session closeout — 2026-05-06 — Sovereign Finance Cloudflare + ATM + Nano Loans
+# SOVEREIGN OPS — STATE FILE
 
-### Current security state
+**Last updated:** 2026-05-06 session closeout — Cloudflare Access S1 + ATM + Nano Loans  
+**Last session ended:** 2026-05-06  
+**Activation:** `boot vault` → Glean reads `GLEAN_OPERATING_SYSTEM.md` FIRST, then this file, then acks with chunk + status + strikes + ships budget  
+**OS active:** v1.0 — pre-flight gates mandatory, max 8 ships per session  
+**Token rule:** no GitHub PAT stored in this file or memory; operator pastes fresh session token when repo reads are needed
 
-Cloudflare Access Phase S1 edge gate is complete.
+---
 
-Confirmed earlier this session:
-- Root production app `sovereign-finance.pages.dev` is protected after removing wildcard `*` from the Access app subdomain.
+## CURRENT CHUNK
+
+**Chunk 1 — FINANCE COMPLETE**  
+**Current status:** Finance Cloudflare app is functional, secured at edge, and mid-port for remaining finance modules.
+
+Current high-level state:
+- Core ledger/write path: shipped and usable.
+- Charts: live and visual standard for the site.
+- Cloudflare Access S1: complete.
+- ATM: API + page confirmed live.
+- ATM Hub/nav integration: placeholder provided, deployment not confirmed.
+- Nano Loans: D1 schema verified; API/page placeholders provided, deployment not confirmed.
+- Sheet → D1 sync: still parked/broken from prior Part 8 migrate issue.
+- No fake ledger-polluting smoke tests were run for ATM or Nano Loans.
+
+---
+
+## SECURITY STATE
+
+### Cloudflare Access Phase S1 — complete
+
+Confirmed:
+- Root production app `sovereign-finance.pages.dev` is protected.
+- Wildcard `*` was removed from the Cloudflare Access app subdomain so the production root is covered.
 - Main website is blocked in incognito before Cloudflare login.
 - Direct `/api/*` routes are blocked in incognito before Cloudflare login.
 
-Security state:
+Meaning:
 - Public exposure is closed at the Cloudflare edge.
-- Next security layer is API identity guard on mutating endpoints using Cloudflare Access identity/JWT/email checks.
-- Later layers: custom domain, role-based users, identity-bound audit entries.
+- Website pages and APIs are no longer openly accessible.
 
-### Layer 5B — ATM web port
+Not yet complete:
+- API identity guard on mutating endpoints.
+- Role-based access.
+- Identity-bound audit entries.
+- Custom domain.
 
-Confirmed complete:
-- Ship 1: `/api/atm` backend is live.
-- Ship 2: `atm.html` page is live.
-- Sheet ATM logic ported: ATM withdrawal is modeled as linked cash movement, not a single expense.
-- ATM fee reversal tracking exists through pending fee rows.
-- No live ATM withdrawal smoke test was run, preserving no-ledger-pollution rule.
+Next security layer:
+- Add API identity guard using Cloudflare Access identity/JWT/email checks on all mutating endpoints.
 
-Prepared but not confirmed deployed:
-- Ship 3: Hub/nav integration.
-- `js/nav.js v1.0.3` placeholder was provided to add ATM to desktop navigation while keeping mobile bottom nav unchanged.
-- `index.html v0.9.6` placeholder was provided to add ATM Control to Hub, add ATM Pending metric, and add ATM reversals to What Needs Action.
-- Need next session verification: check live Hub footer for `v0.9.6 · layer 5B ATM-integrated hub · nav v1.0.3 · app.css v1.0.1`.
-- Need verify: Hub daily tools includes ATM Control, desktop nav includes ATM, mobile bottom nav remains Hub/Add/Tx/Bills/CC.
+---
 
-### Layer 5C — Nano Loans web port
+## ACTIVE LAYERS
 
-Confirmed complete:
-- Ship 1: D1 schema foundation completed.
-- `nano_loans` table exists.
-- Indexes verified:
-  - `idx_nano_loans_app`
-  - `idx_nano_loans_date`
-  - `idx_nano_loans_pushed`
-  - `idx_nano_loans_source`
-  - `idx_nano_loans_status`
-- `PRAGMA table_info(nano_loans)` verified 21 columns from `id` through `updated_at`.
-- `audit_log` contains `NANO_SCHEMA_CREATE`.
-- No nano loan creation was performed.
+### Layer 4 — Website polish
 
-Notes:
-- Cloudflare Console showed harmless SQL errors when expected-output text like `NANO_SCHEMA_CREATE` and `nano_loan_rows = 0` was pasted as SQL.
-- Actual row-count check result was not separately confirmed in clean SQL output, but no create/repay/push action was run.
+Status:
+- Charts is the visual source of truth.
+- Hub has been pushed toward Charts-style premium cockpit design.
+- `app.css v1.0.1` motion foundation was provided.
+- `theme.js v0.7.1` compact theme dock was provided to fix the oversized/stuck theme menu.
+- Need verify which Layer 4 motion/theme files are actually deployed live.
 
-Prepared but not confirmed deployed:
-- Ship 2: `/api/nano-loans` backend placeholder was provided for:
-  - `functions/api/nano-loans/[[path]].js`
-  - version `v0.1.0`
-  - routes:
-    - `GET /api/nano-loans`
-    - `POST /api/nano-loans`
-    - `POST /api/nano-loans/{id}/repay`
-    - `POST /api/nano-loans/{id}/push-to-cc`
-- Ship 3: `nano-loans.html` page placeholder was provided.
-- Deployment of Ship 2 and Ship 3 was not confirmed in chat.
+Design rule:
+- Animate the interface, not the numbers.
+- No fake balance count-ups.
+- Money values must stay exact and honest.
 
-Next session verification:
-1. Check whether `/api/nano-loans` exists after Cloudflare Access login.
-2. Expected JSON:
-   - `"ok": true`
-   - `"version": "v0.1.0"`
-   - `"loans": []`
-   - `"summary": { "active_count": 0 }`
-3. Check whether `/nano-loans.html` exists after Cloudflare Access login.
-4. Expected page:
-   - `Live · Nano API v0.1.0`
-   - `Active Loans = 0`
-   - `Remaining = Rs 0`
-   - empty active/closed loan states
-5. Do not create test nano loans.
-6. Do not run repay.
-7. Do not run push-to-CC.
+### Layer 5A — Debt edit/reclassify hardening
 
-### Process correction
+Status:
+- Debt correction issue discovered.
+- `debt_sehat_kahani_1` was corrected directly in D1 from `owe` to `owed`.
+- API `PUT /api/debts/debt_sehat_kahani_1` had D1 bind/type issue and remains parked.
+- Debt edit/reclassify UI/API hardening remains Layer 5A follow-up.
 
-Glean violated the locked Sovereign Ops delivery rule by offering downloadable sandbox files for `nav.js` and `index.html`.
+Verified debt row:
+- `id`: `debt_sehat_kahani_1`
+- `kind`: `owed`
+- `original_amount`: `11800`
+- `paid_amount`: `0`
+- `remaining`: `11800`
+- `snowball_order`: `4`
+- `status`: `active`
+- `notes`: manual D1 correction after API PUT bind error
 
-Correction locked:
-- No downloadable sandbox files for Sovereign Ops code delivery unless operator explicitly requests.
-- All Sovereign Ops ships must be manual copy-paste placeholders directly in chat.
-- Required format:
-  - exact edit URL
-  - target path
-  - full code block
-  - commit message
-  - deploy wait
-  - verification steps
-  - 3-branch reply line
-- Never substitute sandbox download links for full code blocks.
-
-### Active next-session priorities
-
-1. Verify whether ATM Ship 3 was actually deployed.
-2. If not deployed, resend `js/nav.js v1.0.3` and `index.html v0.9.6` as full copy-paste placeholders, no download links.
-3. Verify whether Nano Ship 2 API was deployed.
-4. Verify whether Nano Ship 3 page was deployed.
-5. Keep no-ledger-pollution rule active: no fake nano loan, no fake ATM withdrawal, no fake repayment.
-6. After Nano page/API are confirmed live, next Layer 5C ship is integration into Hub/nav, same pattern as ATM.
-7. Security next layer after module work: API identity guard on mutating endpoints.
+Next verify if resuming:
