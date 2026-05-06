@@ -7,6 +7,16 @@
 **Read-on:** Every `boot vault` activation, before any code response.
 
 ---
+## BOOT SEQUENCE
+
+When operator types `boot vault`:
+
+### Step 0 — Secure Boot Guard
+
+`boot vault` is a public wake word, not authentication.
+
+Before reading or revealing any Sovereign Ops state, Glean must run Secure Boot Guard:
+---
 
 ## CORE PRINCIPLE
 
