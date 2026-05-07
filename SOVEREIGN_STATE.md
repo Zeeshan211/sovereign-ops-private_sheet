@@ -1,197 +1,105 @@
-# SOVEREIGN_STATE.md
+## Session Progress — Finance Brain / Safety Engine
 
 Last updated: 2026-05-07
-Active project: Sovereign Finance / Sovereign Life OS
-State file purpose: durable resume point for Glean boot sessions
-
----
-
-## 1. Current Active Direction
 
 Active lane:
-
 Finance Brain / Safety Engine
 
-UI polish is halted until explicitly restarted.
+UI polish:
+Halted. Do not resume icons, themes, animation, cards, nav polish, or visual beautification unless operator explicitly restarts UI polish.
 
-The next work is not visual polish. The next work is product intelligence and finance logic.
-
-Primary objective:
-
-Build the finance brain so the system can answer:
-
+Main goal:
+Build the finance brain so the system answers:
 - Am I safe?
 - Why or why not?
 - What changed?
 - What happens next if I do nothing?
 - What action protects me now?
 
-Current benchmark:
+Confirmed live progress:
+- /api/safety v0.1.0 shipped and verified live.
+- /api/cc v0.3.0 shipped and verified live.
+- Credit Card page cc.html v0.3.1 wired to /api/cc due engine and verified by operator.
+- /api/safety v0.1.1 shipped to include Credit Card due/minimum-payment logic.
+- Debt schedule columns added to D1 debts table:
+  - due_day
+  - installment_amount
+  - frequency
+  - last_paid_date
+- /api/debts v0.3.0 Debt Due Schedule Engine shipped and verified live.
+- Debt schedule metadata filled in D1 for active debts/receivables.
+- /api/safety v0.1.2 shipped and verified live with debt schedule safety wiring.
+- Debts page wiring v0.9.0 was provided to display:
+  - next_due_date
+  - due_status
+  - days_until_due
+  - days_overdue
+  - installment_amount
+  - frequency
+  - schedule_missing
+  Verification of debts.html v0.9.0 is pending unless operator already checked it.
 
-- Finance control room: mostly achieved
-- Finance brain: not yet achieved
-- Predictive safety: not yet achieved
-- Google Sheet parity: incomplete
-- UI polish: halted
+Debt data updates:
+- Cleared/past-zero creditor rows were closed where remaining_amount = 0.
+- Session-provided private display-name mapping was used for D1 website display only.
+- Do not store real-name mapping in this state file.
+- Naseem receivable due_date set to 2026-06-01.
+- Active debt/receivable due metadata filled:
+  - debt_motnjpgq-qe6vgx due_date 2026-05-09
+  - debt_sehat_kahani due_date 2026-05-27
+  - debt_yusra due_date 2026-05-12
+  - debt_sehat_kahani_1 due_date 2026-05-27
+  - debt_cred_2_4 due_date 2026-05-15
+  - debt_cred_1_5 due_day 1 monthly, installment_amount left NULL because payment amount is flexible
+- CRED-1 / debt_cred_1_5 balance conflict remains parked:
+  - D1 showed original_amount 285000, paid_amount 170000, remaining_amount 115000
+  - prior private note mentioned different remaining amount
+  - Do not change amount until operator confirms bank/real-world truth.
 
-Next ship:
+Bills progress:
+- /api/bills v0.3.2 confirmed live earlier with last_paid_account_id column present.
+- Bills page/account-aware work exposed a real product defect around Rs 0 Mark Done flow.
+- Rule learned: for known one-off real-world corrections, use smallest safe D1 metadata update instead of forcing UI flow or full rewrite.
+- Maid/cloth washing bill was already paid on 2026-05-01 per operator.
+- Preferred correction path is direct D1 metadata update only:
+  - last_paid_date = 2026-05-01
+  - last_paid_account_id = cash
+  - no transaction created
+- Bills Rs 0 Mark Done frontend/backend guard remains parked unless operator asks to fix:
+  - frontend must force Rs 0 bills to amount 0
+  - backend must decide mark_done from DB bill.amount, not browser-sent amount
+  - no fake Rs 0 or Rs 1 transaction should be created
 
-/api/safety v0.1.0
+Current known Safety Engine signals after v0.1.2:
+- System may still be UNSAFE because of real risk, not because of code failure.
+- Known risks include:
+  - Credit Card utilization high
+  - Thin liquid cash
+  - ATM fee pending
+  - Debt/receivable due pressure based on real due dates
 
-Next ship type:
+Next resume checklist:
+1. Secure boot first.
+2. Read GLEAN_OPERATING_SYSTEM.md first.
+3. Read this SOVEREIGN_STATE.md second.
+4. Confirm UI polish remains halted.
+5. Verify debts.html v0.9.0 if not already confirmed:
+   - https://sovereign-finance.pages.dev/debts.html
+6. Verify /api/safety current output:
+   - https://sovereign-finance.pages.dev/api/safety
+7. If debts page is good, next product priorities are:
+   - Fix Bills Rs 0 Mark Done trust-boundary safely, or
+   - Salary Forecast Engine, or
+   - 30-day Cash Forecast.
+8. Do not mutate ledger data for testing.
+9. Prefer direct guarded D1 metadata corrections for known one-off real-world truth.
+10. Use full-file rewrites only when code defect must be fixed.
 
-Read-only backend endpoint.
+Next recommended feature after debt visibility:
+Salary Forecast Engine or 30-day Cash Forecast.
 
-Next ship rules:
-
-- No UI polish
-- No schema migration unless required
-- No ledger mutation
-- No test ledger pollution
-- No direct write to GitHub by Glean
-- Full-file rewrite only if code is shipped
-- Baby-step instructions only
-- Manual copy-paste by operator
-
----
-
-## 2. Current Main Goal
-
-The finance section exists to remove financial surprise.
-
-It is not only for transaction tracking.
-
-It is not only for showing balances.
-
-It is not only for making a premium app.
-
-The real finance goal is:
-
-One trusted financial truth that tells the operator what changed, what is unsafe, what is coming, and what action protects them before damage happens.
-
-The Hub should eventually answer:
-
-- Am I safe?
-- Why or why not?
-- What changed since last check?
-- What bill, debt, Credit Card, salary, ATM, Nano Loan, or reconciliation event is coming next?
-- What happens if no action is taken?
-- What is the one action to take now?
-
-Current honest status:
-
-The finance control room exists.
-
-The finance brain does not exist yet.
-
----
-
-## 3. UI Polish Halt
-
-UI polish is halted.
-
-Do not continue:
-
-- icons
-- themes
-- animations
-- visual cards
-- layout beautification
-- premium shell work
-- nav polish
-- page cosmetic rewrites
-
-unless the operator explicitly restarts UI polish.
-
-Last UI work status:
-
-- Shell cleanup: confirmed fixed
-- Theme restore: confirmed fixed
-- Cache armor: confirmed live
-- Hub alignment: confirmed live
-- Premium icons restore: full nav.js v1.0.16 rewrite was provided
-- Premium icons verification: unknown unless operator later confirms
-
-No further UI work should be suggested as next step.
-
----
-
-## 4. Latest Confirmed Cloudflare Finance Progress
-
-Confirmed working or completed before halt:
-
-- Cloudflare Access root gate was working after removing wildcard and protecting root sovereign-finance.pages.dev
-- Website and direct /api routes were blocked in incognito before login
-- Layer 1 and Layer 2 were completed for current scope
-- Layer 3 regression passed with core routes working
-- Layer 4 premium Hub and Charts work started
-- Layer 5B ATM page and backend were built and later visually confirmed strong
-- Layer 5C Nano Loans table/schema foundation completed
-- Nano Loans page and Hub/nav integration were later visually confirmed strong
-- Reconciliation backend save fix confirmed live
-- Reconciliation modal UX shipped
-- Mobile bottom nav fixed-bottom guard shipped
-- Global nav included Nano Loans
-- Hub included Nano Loans
-- Reconciliation cache alignment confirmed live
-- ATM cache alignment confirmed live
-- Credit Card cache alignment confirmed live
-- Hub shell fixed so it appears only on Hub
-- Theme button restored and confirmed working
-- Cache armor live
-- Hub cache/copy aligned and confirmed
-
-Known UI/product feedback parked:
-
-- UI polish is halted
-- Accounts layout may still need future review
-- Theme/icon polish can resume later only if explicitly requested
-- Old duplicate app shell issue is fixed
-- Hub/app-shell should remain only on Hub
-
----
-
-## 5. Active Finance Brain Priority Order
-
-Work in this order unless operator explicitly changes priority:
-
-1. Safety Engine v1
-2. Bills payment account control
-3. Credit Card due/minimum-payment logic
-4. Debt installment/due-date logic
-5. Salary forecast engine
-6. 30-day cash forecast
-7. Insights Engine v1
-8. Reconciliation Truth Mode
-9. Merchant / International / FX fee engine
-10. Monthly Close Report
-
-Do not jump into later features before Safety Engine unless required by dependency.
-
----
-
-## 6. Next Ship: /api/safety v0.1.0
-
-Purpose:
-
-Create a read-only backend endpoint that computes finance safety from existing data.
-
-Endpoint:
-
-/api/safety
-
-First version must be read-only.
-
-No ledger mutation.
-
-No schema mutation unless absolutely required.
-
-No test transaction.
-
-No test bill.
-
-No test debt.
-
-No test Credit Card payment.
-
-Expected response shape:
+Parked:
+- UI animation for Hub “What needs action” Safety Engine cards.
+- Bills Rs 0 Mark Done code guard unless operator prioritizes it.
+- International / FX / PRA / merchant fee engine until safety/forecast foundation is stronger.
+- Goals until debt-free or until forecasting needs them.
