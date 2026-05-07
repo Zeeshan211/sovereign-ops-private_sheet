@@ -1,208 +1,197 @@
+# SOVEREIGN_STATE.md
 
-# Sovereign Ops State Update — 2026-05-07 UI Session
+Last updated: 2026-05-07
+Active project: Sovereign Finance / Sovereign Life OS
+State file purpose: durable resume point for Glean boot sessions
 
-## Current mode
+---
 
-Off-Day Sprint Mode was activated for this session after operator declared the day as an actual off-day.
+## 1. Current Active Direction
 
-Active UI declaration:
+Active lane:
 
-- Objective: Layered premium UI upgrade while preserving real-data truth and avoiding ledger/business-logic changes.
-- Max risk: Yellow max for UI behavior.
-- Mutating ships: 0 for this UI block.
-- Forbidden during this UI block:
-  - Ledger mutation
-  - Bills payment logic changes
-  - ATM ledger behavior changes
-  - Nano Loans repay/push-to-Credit-Card logic changes
-  - Schema changes
-  - Fake-data smoke tests
-  - Personal/Motive system mixing
+Finance Brain / Safety Engine
 
-## UI layer execution status
+UI polish is halted until explicitly restarted.
 
-### Completed / shipped in chat
+The next work is not visual polish. The next work is product intelligence and finance logic.
 
-1. `js/nav.js v1.0.6`
-   - Premium layered desktop side rail.
-   - Grouped navigation:
-     - Daily Core
-     - Money Control
-     - Planning
-     - Proof & Safety
+Primary objective:
 
-2. `js/nav.js v1.0.7`
-   - Mobile full-module drawer.
-   - Bottom nav remains daily-core only.
-   - Floating All button exposes full module list.
+Build the finance brain so the system can answer:
 
-3. `js/nav.js v1.0.8`
-   - Global app shell identity.
-   - Later identified as too broad because it appeared on every page and duplicated headers.
+- Am I safe?
+- Why or why not?
+- What changed?
+- What happens next if I do nothing?
+- What action protects me now?
 
-4. `js/nav.js v1.0.9`
-   - App shell / theme button overlap guard.
+Current benchmark:
 
-5. `js/nav.js v1.0.11`
-   - Navigation contract restore.
-   - Restored intended contract:
-     - Mobile <= 860px: bottom nav visible.
-     - Mobile <= 860px: All drawer visible.
-     - Web/tablet >= 861px: side rail visible.
-   - Fixed earlier issue where mobile bottom panel disappeared.
+- Finance control room: mostly achieved
+- Finance brain: not yet achieved
+- Predictive safety: not yet achieved
+- Google Sheet parity: incomplete
+- UI polish: halted
 
-6. `js/nav.js v1.0.12`
-   - Premium card system foundation on restored nav contract.
+Next ship:
 
-7. `js/nav.js v1.0.13`
-   - Real-data motion foundation.
-   - Animates only existing real values/progress indicators.
-   - No fake numbers.
+/api/safety v0.1.0
 
-8. `js/nav.js v1.0.14`
-   - Hub-only shell cleanup.
-   - Removes global app shell from every page except Hub.
-   - Changes CC wording to Credit Card / Card.
-   - Prevents Real data badge from overlapping account amounts.
-   - Keeps no ledger/API/schema/business logic changes.
+Next ship type:
 
-## Verified by operator
+Read-only backend endpoint.
 
-- Ship 1 nav live was confirmed.
-- Ship 2 drawer live was confirmed.
-- Ship 4 overlap fixed was confirmed.
-- Old navigation inconsistency into Transactions was reported solved.
-- Hub was reported as amazing overall.
-- ATM section was reported amazing.
-- Nano Loans section was reported amazing.
+Next ship rules:
 
-## Current unverified item
+- No UI polish
+- No schema migration unless required
+- No ledger mutation
+- No test ledger pollution
+- No direct write to GitHub by Glean
+- Full-file rewrite only if code is shipped
+- Baby-step instructions only
+- Manual copy-paste by operator
 
-`js/nav.js v1.0.14` was provided as the latest ship but operator has not yet confirmed deployment/pass in chat.
+---
 
-Next session should start by verifying:
+## 2. Current Main Goal
 
-- Hub shell appears only on Hub.
-- Other pages no longer show duplicate Sovereign Finance / Hub / Cockpit shell.
-- Side nav says Credit Card instead of CC Planner.
-- Bottom nav says Card instead of CC.
-- Accounts amount and Real data badge no longer overlap.
-- Theme button still needs separate verification because operator reported it lost effectiveness.
+The finance section exists to remove financial surprise.
 
-## Parked issues by layer
+It is not only for transaction tracking.
 
-### UI-1 — Navigation / cache / wrapper
+It is not only for showing balances.
 
-- Global nav/cache consistency sweep is still parked for UI-9 Final Polish.
-- Some pages were found to still reference stale nav cache query strings such as `/js/nav.js?v=0.7.5`.
-- Operator explicitly rejected one-page-at-a-time cache fixes for now.
-- Final polish must update all pages to the current nav.js version query param.
+It is not only for making a premium app.
 
-### UI-2 — Page identity / shell usefulness
+The real finance goal is:
 
-- Hub shell is allowed.
-- Generic shell on every page is not allowed.
-- “Am I safe?” is not useful unless it tells what is unsafe and why.
-- Future Hub safety should be based on real signals:
-  - overdue bill
-  - Credit Card pressure
-  - cash mismatch
-  - debt pressure
-  - unreconciled balance
+One trusted financial truth that tells the operator what changed, what is unsafe, what is coming, and what action protects them before damage happens.
 
-### UI-3 — Cards / layout
+The Hub should eventually answer:
 
-- Accounts layout had amount and Real data badge overlap.
-- Latest ship hides Real data badge on Accounts/account cards.
-- Needs verification after deploy.
+- Am I safe?
+- Why or why not?
+- What changed since last check?
+- What bill, debt, Credit Card, salary, ATM, Nano Loan, or reconciliation event is coming next?
+- What happens if no action is taken?
+- What is the one action to take now?
 
-### UI-4 — Themes / motion
+Current honest status:
 
-- Theme button lost effectiveness and does not change page themes properly.
-- This is a real regression and should be one of the next UI corrective ships.
-- Do not add more motion before theme effectiveness is restored.
+The finance control room exists.
 
-### Product layer — Bills
+The finance brain does not exist yet.
 
-- Bills page still does not allow selecting/editing the account used to pay each bill.
-- Bill payment account must not be constant.
-- This is product/logic + UI work, not just visual polish.
-- Do not mix into visual-only UI block unless logic layer is explicitly activated.
+---
 
-### Product layer — Credit Card
+## 3. UI Polish Halt
 
-- Official wording should be Credit Card, not CC.
-- Latest nav ship changed nav labels, but page-level text may still need sweep.
-- Future logic still needed:
-  - statement date
-  - due date
-  - minimum required payment
-  - 55-day interest-free period
+UI polish is halted.
 
-### Product layer — Debts
+Do not continue:
 
-- Debts must show due dates professionally:
-  - next installment due date
-  - days until due
-  - days overdue if missed
-  - current installment context
+- icons
+- themes
+- animations
+- visual cards
+- layout beautification
+- premium shell work
+- nav polish
+- page cosmetic rewrites
 
-### Product layer — Salary
+unless the operator explicitly restarts UI polish.
 
-Salary is too simple and needs:
+Last UI work status:
 
-- projection / forecast
-- tax paid to date
-- payslip components
-- configurable salary components
-- next salary forecast from known inputs
+- Shell cleanup: confirmed fixed
+- Theme restore: confirmed fixed
+- Cache armor: confirmed live
+- Hub alignment: confirmed live
+- Premium icons restore: full nav.js v1.0.16 rewrite was provided
+- Premium icons verification: unknown unless operator later confirms
 
-### Product layer — International transactions / fees
+No further UI work should be suggested as next step.
 
-Do not assume international transaction logic is complete.
+---
 
-Future feature/schema work needed:
+## 4. Latest Confirmed Cloudflare Finance Progress
 
-- international transaction flag
-- FX amount/rate
-- PRA/local fee logic
-- merchant/category fee rules
-- parity with Google Sheets logic
+Confirmed working or completed before halt:
 
-### Product layer — Goals
+- Cloudflare Access root gate was working after removing wildcard and protecting root sovereign-finance.pages.dev
+- Website and direct /api routes were blocked in incognito before login
+- Layer 1 and Layer 2 were completed for current scope
+- Layer 3 regression passed with core routes working
+- Layer 4 premium Hub and Charts work started
+- Layer 5B ATM page and backend were built and later visually confirmed strong
+- Layer 5C Nano Loans table/schema foundation completed
+- Nano Loans page and Hub/nav integration were later visually confirmed strong
+- Reconciliation backend save fix confirmed live
+- Reconciliation modal UX shipped
+- Mobile bottom nav fixed-bottom guard shipped
+- Global nav included Nano Loans
+- Hub included Nano Loans
+- Reconciliation cache alignment confirmed live
+- ATM cache alignment confirmed live
+- Credit Card cache alignment confirmed live
+- Hub shell fixed so it appears only on Hub
+- Theme button restored and confirmed working
+- Cache armor live
+- Hub cache/copy aligned and confirmed
 
-- Goals deferred until debt-free.
-- Do not spend active build energy here unless operator explicitly reactivates.
+Known UI/product feedback parked:
 
-### Product layer — Insights
+- UI polish is halted
+- Accounts layout may still need future review
+- Theme/icon polish can resume later only if explicitly requested
+- Old duplicate app shell issue is fixed
+- Hub/app-shell should remain only on Hub
 
-- Insights is too simple and not fully integrated.
-- Future Insights must pull from:
-  - bills
-  - debts
-  - accounts
-  - salary
-  - transactions
-  - reconciliation
-  - Credit Card
+---
 
-## Recommended next chat boot
+## 5. Active Finance Brain Priority Order
 
-Start next chat with:
+Work in this order unless operator explicitly changes priority:
 
-```text
-boot vault
-```
+1. Safety Engine v1
+2. Bills payment account control
+3. Credit Card due/minimum-payment logic
+4. Debt installment/due-date logic
+5. Salary forecast engine
+6. 30-day cash forecast
+7. Insights Engine v1
+8. Reconciliation Truth Mode
+9. Merchant / International / FX fee engine
+10. Monthly Close Report
 
-Then after Secure Boot:
+Do not jump into later features before Safety Engine unless required by dependency.
 
-```text
-Resume 2026-05-07 UI session from SOVEREIGN_STATE.md and sessions/2026-05-07_ui_session_close.md. First verify nav.js v1.0.14, then fix theme button effectiveness.
-```
+---
 
-## Next best action
+## 6. Next Ship: /api/safety v0.1.0
 
-1. Verify latest `js/nav.js v1.0.14`.
-2. If pass, mark UI shell cleanup complete.
-3. Next ship should be theme button effectiveness restore.
-4. After theme fix, continue with targeted UI/product layers, not broad decorative polish.
+Purpose:
+
+Create a read-only backend endpoint that computes finance safety from existing data.
+
+Endpoint:
+
+/api/safety
+
+First version must be read-only.
+
+No ledger mutation.
+
+No schema mutation unless absolutely required.
+
+No test transaction.
+
+No test bill.
+
+No test debt.
+
+No test Credit Card payment.
+
+Expected response shape:
