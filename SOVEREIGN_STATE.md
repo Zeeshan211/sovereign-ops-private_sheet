@@ -1,42 +1,82 @@
-## 2026-05-08 Closeout — Finance Core Build Arc
+## Life OS Expansion Plan — After Finance Core
 
-Status: Finance Core build arc completed for current scope.
+Status: Finance Core is the first completed cockpit. Next direction is Sovereign Life OS shell, not more Finance-only expansion.
 
-Ships completed this session:
-1. /api/forecast v0.2.0 — live
-2. forecast.html v0.2.0 — live
-3. /api/safety v0.2.0 — live
-4. forecast.html v0.3.0 Safety display — live
-5. /api/insights v0.3.0 — live
-6. insights.html v0.4.0 — live
-7. /api/monthly-close v0.1.0 — live
-8. monthly-close.html v0.1.0 — live
+Core architecture decision:
+- Finance remains isolated as its own cockpit.
+- Salah, Habits, Mission, Health, Knowledge, and AI must not be mixed into Finance UI.
+- Main Command Centre sits above all domains and shows only summary/action state.
+- Each domain keeps its own route, schema, API, UI identity, and logic.
+- AI Curator reads across domains and creates decision/briefing output.
+- Telegram Bot relays only curated AI messages, not raw noisy data.
 
-Current standing:
-- Forecast brain: live
-- Safety brain: live
-- Insights brain: live
-- Monthly Close brain: live
-- Core Finance: functionally built
-- Final audit certification: not complete yet
+Recommended domain routes:
+- / — Main Command Centre
+- /finance — Finance cockpit
+- /salah — Salah cockpit
+- /habits — Habits cockpit
+- /mission — Mission cockpit
+- /health — Health cockpit later
+- /knowledge — Notes/Learning cockpit later
+- /ai — AI Command Centre
+- /settings — System settings
 
-Known audit-hardening items:
-1. /api/forecast still hard-codes payslip_2026_04; needs active_payslip_id/config-driven payslip selection.
-2. Forecast bill paid-cycle logic can skip next-month bill obligations if paid in current month.
-3. /api/monthly-close reconciliation currently uses month-window transaction rows; final audit should use full-ledger transaction truth for stale declaration checks.
-4. js/nav.js needs Insights and Monthly Close added to shared navigation.
-5. Hub/index page footer/version and finance brain links need refresh.
-6. Final line-by-line audit still pending across APIs, pages, formulas, reconciliation, ledger mutation safety, manual-variable separation, and navigation.
+Recommended build layers:
+1. Life OS Shell / Main Command Centre
+   - Create new main command centre concept.
+   - Add domain cards for Finance, Salah, Habits, Mission, AI.
+   - Finance remains accessible but not the whole website identity.
+   - Salah/Habits/Mission can start as structured placeholders until data export.
 
-Governance:
-- Normal Mode ship cap reached: 8/8.
-- Mutating ships used: 0/2.
-- No further code/UI ships performed after cap.
-- Next coding window should start with UI polish or audit-hardening, not new feature expansion.
+2. Salah Export
+   - D1 schema for salah logs/status/recovery.
+   - /api/salah/today.
+   - /api/salah/insights.
+   - salah.html cockpit.
+   - Calm, separate design. No finance widgets inside Salah.
 
-Next recommended work:
-1. UI polish Ship 1: nav.js + Hub alignment for Insights and Monthly Close.
-2. UI polish Ship 2: visual consistency across Forecast, Insights, Monthly Close.
-3. Audit-hardening Ship 1: forecast payslip source + bill paid-cycle fix.
-4. Audit-hardening Ship 2: monthly-close full-ledger reconciliation truth.
-5. Final comprehensive line-by-line audit.
+3. Habits Export
+   - D1 schema for habit definitions/logs/daily status.
+   - /api/habits/today.
+   - /api/habits/insights.
+   - habits.html cockpit.
+   - Checklist, momentum, recovery, workday/off-day pattern.
+
+4. Mission Export
+   - Mission/project/milestone schema or API.
+   - /api/mission/status.
+   - mission.html cockpit.
+   - Shows current priority, active project, milestone, blockers, weekly direction.
+
+5. AI Curator
+   - /api/ai/briefing.
+   - /api/ai/decision-queue.
+   - Reads Finance + Salah + Habits + Mission.
+   - Produces curated decisions, not generic advice.
+
+6. Telegram Relay
+   - /api/telegram/relay.
+   - telegram relay log.
+   - Sends only approved/curated daily briefing, prayer recovery, habit nudges, finance alerts, and decision prompts.
+
+Main Command Centre contract:
+- Show domain summary only.
+- Show What Needs Action across domains.
+- Show Today Timeline.
+- Show Decision Queue.
+- Show Quick Actions.
+- Do not expose full Finance ledger inside Main Command Centre.
+- Do not expose full Salah history inside Finance.
+- Keep domains separate but connected through AI Curator.
+
+Next coding layer:
+Layer 1 — Life OS Shell / Main Command Centre.
+
+First ship when coding window/mode allows:
+- Create or rewrite root Command Centre shell.
+- Add domain cards: Finance, Salah, Habits, Mission, AI.
+- Keep current Finance cockpit accessible.
+- Add placeholders for Salah/Habits/Mission without fake data.
+- No D1 schema changes.
+- No ledger mutation.
+- No finance formula changes.
