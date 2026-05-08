@@ -1,7 +1,7 @@
-// Salah_D1_Export.gs v0.1.1
+// Salah_D1_Export.gs v0.1.2
 // Layer 2B - Sheet -> D1 Salah export mapping
 //
-// Reads the existing Salah_Pro v2.1 cockpit tab: ' Salah'
+// Reads the existing Salah_Pro v2.1 cockpit tab.
 // Writes D1 import SQL into D1_Salah_Export, one SQL statement per row.
 //
 // Safety:
@@ -11,9 +11,10 @@
 // - Does not create fake prayer rows.
 // - Recovery rows are generated only from real Q / Qaza cells.
 
-var SALAH_D1_EXPORT_VERSION = 'Salah_D1_Export v0.1.1';
+var SALAH_D1_EXPORT_VERSION = 'Salah_D1_Export v0.1.2';
 var SALAH_D1_SOURCE_VERSION = 'Salah_Pro v2.1';
-var SALAH_D1_TAB = ' Salah';
+var SALAH_D1_PRIMARY_TAB = 'Salah';
+var SALAH_D1_FALLBACK_TAB = ' Salah';
 var SALAH_D1_EXPORT_TAB = 'D1_Salah_Export';
 var SALAH_D1_GRID_START_ROW = 6;
 var SALAH_D1_GRID_DAYS = 31;
@@ -21,10 +22,10 @@ var SALAH_D1_TZ = 'Asia/Karachi';
 
 function verifySalahD1ExportSource() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var salah = ss.getSheetByName(SALAH_D1_TAB);
+  var salah = _salahD1GetSourceSheet_(ss);
 
   if (!salah) {
-    _salahD1Alert('Salah tab missing. Expected: ' + SALAH_D1_TAB);
+    _salahD1Alert('Salah tab not found. Tried: "' + SALAH_D1_PRIMARY_TAB + '" and "' + SALAH_D1_FALLBACK_TAB + '"');
     return;
   }
 
@@ -47,7 +48,7 @@ function verifySalahD1ExportSource() {
 
   _salahD1Alert(
     'Salah D1 source verification\n\n' +
-    'Tab: ' + SALAH_D1_TAB + '\n' +
+    'Tab: ' + salah.getName() + '\n' +
     'Detected layout: ' + layout + '\n' +
     'Grid rows checked: ' + SALAH_D1_GRID_DAYS + '\n' +
     'Date rows found: ' + dateRows + '\n' +
@@ -59,13 +60,14 @@ function verifySalahD1ExportSource() {
 
 function buildSalahD1ExportSql() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var salah = ss.getSheetByName(SALAH_D1_TAB);
+  var salah = _salahD1GetSourceSheet_(ss);
 
   if (!salah) {
-    _salahD1Alert('Salah tab not found. Expected: ' + SALAH_D1_TAB);
+    _salahD1Alert('Salah tab not found. Tried: "' + SALAH_D1_PRIMARY_TAB + '" and "' + SALAH_D1_FALLBACK_TAB + '"');
     return;
   }
 
+  var sourceTab = salah.getName();
   var now = new Date();
   var exportedAt = Utilities.formatDate(now, SALAH_D1_TZ, "yyyy-MM-dd'T'HH:mm:ssXXX");
   var exportBatchId = 'salah_export_' + Utilities.formatDate(now, SALAH_D1_TZ, 'yyyyMMdd_HHmmss');
@@ -79,7 +81,7 @@ function buildSalahD1ExportSql() {
 
   sql.push('-- Salah D1 Export');
   sql.push('-- Generated: ' + exportedAt);
-  sql.push('-- Source tab: ' + SALAH_D1_TAB);
+  sql.push('-- Source tab: ' + sourceTab);
   sql.push('-- Source version: ' + SALAH_D1_SOURCE_VERSION);
   sql.push('-- Exporter: ' + SALAH_D1_EXPORT_VERSION);
   sql.push('-- Batch: ' + exportBatchId);
@@ -94,11 +96,11 @@ function buildSalahD1ExportSql() {
 
     rowsRead++;
 
-    dailyStatements.push(_salahD1DailyInsertSql_(row, exportBatchId, exportedAt, sourceLayout));
+    dailyStatements.push(_salahD1DailyInsertSql_(row, exportBatchId, exportedAt, sourceLayout, sourceTab));
     rowsWritten++;
 
     row.prayers.forEach(function(entry) {
-      entryStatements.push(_salahD1PrayerEntryInsertSql_(entry, exportBatchId, exportedAt));
+      entryStatements.push(_salahD1PrayerEntryInsertSql_(entry, exportBatchId, exportedAt, sourceTab));
       rowsWritten++;
 
       if (entry.is_qaza === 1) {
@@ -110,11 +112,12 @@ function buildSalahD1ExportSql() {
 
   sql.push(_salahD1BatchInsertSql_({
     id: exportBatchId,
+    sourceTab: sourceTab,
     sourceLayout: sourceLayout,
     exportedAt: exportedAt,
     rowsRead: rowsRead,
     rowsWritten: rowsWritten,
-    notes: 'Generated from ' + SALAH_D1_TAB + ' rows 6-36. No direct D1 mutation by Apps Script.'
+    notes: 'Generated from ' + sourceTab + ' rows 6-36. No direct D1 mutation by Apps Script.'
   }));
 
   if (prayerTimes) {
@@ -131,12 +134,14 @@ function buildSalahD1ExportSql() {
     exportedAt: exportedAt,
     rowsRead: rowsRead,
     rowsWritten: rowsWritten,
-    sourceLayout: sourceLayout
+    sourceLayout: sourceLayout,
+    sourceTab: sourceTab
   });
 
   _salahD1Alert(
     'Salah D1 export SQL generated.\n\n' +
     'Tab: ' + SALAH_D1_EXPORT_TAB + '\n' +
+    'Source: ' + sourceTab + '\n' +
     'Batch: ' + exportBatchId + '\n' +
     'Rows read: ' + rowsRead + '\n' +
     'SQL rows written: ' + sql.length + '\n\n' +
@@ -150,6 +155,10 @@ function appendSalahD1ExportMenu() {
     .addItem('Verify Salah Export Source', 'verifySalahD1ExportSource')
     .addItem('Build D1 Export SQL', 'buildSalahD1ExportSql')
     .addToUi();
+}
+
+function _salahD1GetSourceSheet_(ss) {
+  return ss.getSheetByName(SALAH_D1_PRIMARY_TAB) || ss.getSheetByName(SALAH_D1_FALLBACK_TAB);
 }
 
 function _salahD1ReadRows_(salah) {
@@ -299,7 +308,7 @@ function _salahD1BatchInsertSql_(batch) {
     '(id, source_system, source_tab, source_version, source_layout, export_type, exported_at, rows_read, rows_written, status, notes, created_at) VALUES (' +
     _salahD1Sql_(batch.id) + ', ' +
     _salahD1Sql_('google_sheet') + ', ' +
-    _salahD1Sql_(SALAH_D1_TAB) + ', ' +
+    _salahD1Sql_(batch.sourceTab) + ', ' +
     _salahD1Sql_(SALAH_D1_SOURCE_VERSION) + ', ' +
     _salahD1Sql_(batch.sourceLayout) + ', ' +
     _salahD1Sql_('manual_sql_export') + ', ' +
@@ -312,7 +321,7 @@ function _salahD1BatchInsertSql_(batch) {
     ');';
 }
 
-function _salahD1DailyInsertSql_(row, exportBatchId, exportedAt, sourceLayout) {
+function _salahD1DailyInsertSql_(row, exportBatchId, exportedAt, sourceLayout, sourceTab) {
   return 'INSERT OR REPLACE INTO salah_daily_status ' +
     '(day, day_of_month, raw_fajr_code, raw_dhuhr_code, raw_asr_code, raw_maghrib_code, raw_isha_code, raw_jumuah_code, raw_tahajjud_status, ' +
     'normalized_fajr_code, normalized_dhuhr_code, normalized_asr_code, normalized_maghrib_code, normalized_isha_code, normalized_jumuah_code, ' +
@@ -344,7 +353,7 @@ function _salahD1DailyInsertSql_(row, exportBatchId, exportedAt, sourceLayout) {
     Number(row.late_count || 0) + ', ' +
     _salahD1Sql_(row.notes) + ', ' +
     _salahD1Sql_('google_sheet') + ', ' +
-    _salahD1Sql_(SALAH_D1_TAB) + ', ' +
+    _salahD1Sql_(sourceTab) + ', ' +
     _salahD1Sql_(SALAH_D1_SOURCE_VERSION) + ', ' +
     _salahD1Sql_(sourceLayout) + ', ' +
     Number(row.source_row || 0) + ', ' +
@@ -355,7 +364,7 @@ function _salahD1DailyInsertSql_(row, exportBatchId, exportedAt, sourceLayout) {
     ');';
 }
 
-function _salahD1PrayerEntryInsertSql_(entry, exportBatchId, exportedAt) {
+function _salahD1PrayerEntryInsertSql_(entry, exportBatchId, exportedAt, sourceTab) {
   return 'INSERT OR REPLACE INTO salah_prayer_entries ' +
     '(id, day, prayer_name, raw_code, normalized_code, location_label, score_value, is_logged, is_masjid, is_jamaat, is_work, is_home, is_late, is_qaza, has_valid_udhr, is_jam_combined, jam_type, logged_at, note, ' +
     'source_system, source_tab, source_version, source_row, source_column, source_checksum, export_batch_id, exported_at, updated_at) VALUES (' +
@@ -379,7 +388,7 @@ function _salahD1PrayerEntryInsertSql_(entry, exportBatchId, exportedAt) {
     'NULL, ' +
     _salahD1Sql_('') + ', ' +
     _salahD1Sql_('google_sheet') + ', ' +
-    _salahD1Sql_(SALAH_D1_TAB) + ', ' +
+    _salahD1Sql_(sourceTab) + ', ' +
     _salahD1Sql_(SALAH_D1_SOURCE_VERSION) + ', ' +
     Number(entry.source_row || 0) + ', ' +
     _salahD1Sql_(entry.source_column) + ', ' +
@@ -444,14 +453,16 @@ function _salahD1WriteExportSheet_(ss, sql, meta) {
   out.getRange(2, 2).setValue(meta.exportBatchId);
   out.getRange(3, 1).setValue('Exported At');
   out.getRange(3, 2).setValue(meta.exportedAt);
-  out.getRange(4, 1).setValue('Source Layout');
-  out.getRange(4, 2).setValue(meta.sourceLayout);
-  out.getRange(5, 1).setValue('Rows Read');
-  out.getRange(5, 2).setValue(meta.rowsRead);
-  out.getRange(6, 1).setValue('SQL Rows Written');
-  out.getRange(6, 2).setValue(sql.length);
-  out.getRange(7, 1).setValue('Instruction');
-  out.getRange(7, 2).setValue('Copy SQL from row 10 downward. Do not copy metadata rows.');
+  out.getRange(4, 1).setValue('Source Tab');
+  out.getRange(4, 2).setValue(meta.sourceTab);
+  out.getRange(5, 1).setValue('Source Layout');
+  out.getRange(5, 2).setValue(meta.sourceLayout);
+  out.getRange(6, 1).setValue('Rows Read');
+  out.getRange(6, 2).setValue(meta.rowsRead);
+  out.getRange(7, 1).setValue('SQL Rows Written');
+  out.getRange(7, 2).setValue(sql.length);
+  out.getRange(8, 1).setValue('Instruction');
+  out.getRange(8, 2).setValue('Copy SQL from row 10 downward. Do not copy metadata rows.');
 
   out.getRange(9, 1).setValue('line_no');
   out.getRange(9, 2).setValue('sql_statement');
