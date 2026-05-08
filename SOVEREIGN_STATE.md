@@ -1,82 +1,56 @@
-## Life OS Expansion Plan — After Finance Core
+## 2026-05-08 Closeout — Life OS Shell Expansion
 
-Status: Finance Core is the first completed cockpit. Next direction is Sovereign Life OS shell, not more Finance-only expansion.
+Status: Life OS Shell phase started after Finance Core build arc.
 
-Core architecture decision:
-- Finance remains isolated as its own cockpit.
-- Salah, Habits, Mission, Health, Knowledge, and AI must not be mixed into Finance UI.
-- Main Command Centre sits above all domains and shows only summary/action state.
-- Each domain keeps its own route, schema, API, UI identity, and logic.
-- AI Curator reads across domains and creates decision/briefing output.
-- Telegram Bot relays only curated AI messages, not raw noisy data.
+Completed / prepared this phase:
+1. Root Life OS Command Centre created at `/`.
+2. Finance remains isolated as its own live-data cockpit.
+3. Salah Cockpit Shell created at `/salah.html`.
+4. Habits Cockpit Shell prepared at `/habits.html`.
+5. Mission Cockpit Shell prepared at `/mission.html`.
+6. AI Curator Shell prepared at `/ai.html`.
+7. Command Centre link alignment v0.1.2 prepared to link Finance, Salah, Habits, Mission, and AI from root.
 
-Recommended domain routes:
-- / — Main Command Centre
-- /finance — Finance cockpit
-- /salah — Salah cockpit
-- /habits — Habits cockpit
-- /mission — Mission cockpit
-- /health — Health cockpit later
-- /knowledge — Notes/Learning cockpit later
-- /ai — AI Command Centre
-- /settings — System settings
+Domain separation contract:
+- Finance must not show Salah logs, Habit logs, or Mission internals.
+- Salah must not show balances, bills, debts, salary, Credit Card, reconciliation, or Finance widgets.
+- Habits must not show finance data or Salah recovery logic.
+- Mission may show direction and priorities but must not expose raw private domain tables.
+- AI Curator reads domain summaries only and must not invent live state.
+- Telegram relay remains future work and should send only curated messages.
 
-Recommended build layers:
-1. Life OS Shell / Main Command Centre
-   - Create new main command centre concept.
-   - Add domain cards for Finance, Salah, Habits, Mission, AI.
-   - Finance remains accessible but not the whole website identity.
-   - Salah/Habits/Mission can start as structured placeholders until data export.
+Current route model:
+- `/` = Main Command Centre
+- `/forecast.html`, `/insights.html`, `/monthly-close.html` = Finance brain pages
+- `/salah.html` = Salah shell
+- `/habits.html` = Habits shell
+- `/mission.html` = Mission shell
+- `/ai.html` = AI Curator shell
 
-2. Salah Export
-   - D1 schema for salah logs/status/recovery.
-   - /api/salah/today.
-   - /api/salah/insights.
-   - salah.html cockpit.
-   - Calm, separate design. No finance widgets inside Salah.
+Current data status:
+- Finance: live-data backed.
+- Salah: shell only, no live prayer data yet.
+- Habits: shell only, no live habit data yet.
+- Mission: shell only, no live mission data yet.
+- AI: shell only, no live decision queue yet.
 
-3. Habits Export
-   - D1 schema for habit definitions/logs/daily status.
-   - /api/habits/today.
-   - /api/habits/insights.
-   - habits.html cockpit.
-   - Checklist, momentum, recovery, workday/off-day pattern.
+Next build queue:
+1. Finish/verify Command Centre Link Alignment v0.1.2.
+2. Start Salah Export Layer 2A.
+3. Build `/api/salah/today`.
+4. Build `/api/salah/insights`.
+5. Wire `salah.html` to real Salah API data.
+6. Start Habits Export Layer 3A after Salah foundation is stable.
 
-4. Mission Export
-   - Mission/project/milestone schema or API.
-   - /api/mission/status.
-   - mission.html cockpit.
-   - Shows current priority, active project, milestone, blockers, weekly direction.
+Salah Export Layer 2A target:
+- Create D1 schema for Salah logs/status/recovery.
+- Preserve separation from Finance.
+- No fake prayer data.
+- No finance contamination.
+- No ledger or finance formula changes.
 
-5. AI Curator
-   - /api/ai/briefing.
-   - /api/ai/decision-queue.
-   - Reads Finance + Salah + Habits + Mission.
-   - Produces curated decisions, not generic advice.
-
-6. Telegram Relay
-   - /api/telegram/relay.
-   - telegram relay log.
-   - Sends only approved/curated daily briefing, prayer recovery, habit nudges, finance alerts, and decision prompts.
-
-Main Command Centre contract:
-- Show domain summary only.
-- Show What Needs Action across domains.
-- Show Today Timeline.
-- Show Decision Queue.
-- Show Quick Actions.
-- Do not expose full Finance ledger inside Main Command Centre.
-- Do not expose full Salah history inside Finance.
-- Keep domains separate but connected through AI Curator.
-
-Next coding layer:
-Layer 1 — Life OS Shell / Main Command Centre.
-
-First ship when coding window/mode allows:
-- Create or rewrite root Command Centre shell.
-- Add domain cards: Finance, Salah, Habits, Mission, AI.
-- Keep current Finance cockpit accessible.
-- Add placeholders for Salah/Habits/Mission without fake data.
-- No D1 schema changes.
-- No ledger mutation.
-- No finance formula changes.
+Governance note:
+- No direct GitHub write access.
+- Use session-only PAT reads when needed.
+- Deliver manual full-file rewrites only.
+- Provide exact edit URLs, commit messages, deploy wait, and verification steps.
