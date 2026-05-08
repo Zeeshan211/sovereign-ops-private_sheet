@@ -1,4 +1,4 @@
-// Salah_D1_Export.gs v0.1.2
+// Salah_D1_Export.gs v0.1.3
 // Layer 2B - Sheet -> D1 Salah export mapping
 //
 // Reads the existing Salah_Pro v2.1 cockpit tab.
@@ -9,12 +9,17 @@
 // - Does not mutate D1.
 // - Does not touch Finance.
 // - Does not create fake prayer rows.
+// - Exports only today and past rows.
+// - Skips future/default cockpit rows.
 // - Recovery rows are generated only from real Q / Qaza cells.
 
-var SALAH_D1_EXPORT_VERSION = 'Salah_D1_Export v0.1.2';
+var SALAH_D1_EXPORT_VERSION = 'Salah_D1_Export v0.1.3';
 var SALAH_D1_SOURCE_VERSION = 'Salah_Pro v2.1';
-var SALAH_D1_PRIMARY_TAB = 'Salah';
+
+var SALAH_D1_PRIMARY_TAB = '🕌 Salah';
+var SALAH_D1_SECONDARY_TAB = 'Salah';
 var SALAH_D1_FALLBACK_TAB = ' Salah';
+
 var SALAH_D1_EXPORT_TAB = 'D1_Salah_Export';
 var SALAH_D1_GRID_START_ROW = 6;
 var SALAH_D1_GRID_DAYS = 31;
@@ -24,20 +29,30 @@ function verifySalahD1ExportSource() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var salah = _salahD1GetSourceSheet_(ss);
 
-  if (!salah) {
-    _salahD1Alert('Salah tab not found. Tried: "' + SALAH_D1_PRIMARY_TAB + '" and "' + SALAH_D1_FALLBACK_TAB + '"');
-    return;
-  }
+  if (!salah) return;
 
+  var todayIso = _salahD1TodayIso_();
   var layout = _salahD1DetectLayout_(salah);
   var values = salah.getRange(SALAH_D1_GRID_START_ROW, 1, SALAH_D1_GRID_DAYS, 11).getValues();
 
   var dateRows = 0;
+  var eligibleRows = 0;
+  var futureRowsSkipped = 0;
   var loggedCells = 0;
   var qazaCells = 0;
 
   values.forEach(function(row) {
-    if (row[0] instanceof Date) dateRows++;
+    var day = _salahD1DateToIso_(row[0]);
+    if (!day) return;
+
+    dateRows++;
+
+    if (day > todayIso) {
+      futureRowsSkipped++;
+      return;
+    }
+
+    eligibleRows++;
 
     [1, 2, 3, 4, 5, 6].forEach(function(idx) {
       var code = String(row[idx] || '').trim();
@@ -50,8 +65,11 @@ function verifySalahD1ExportSource() {
     'Salah D1 source verification\n\n' +
     'Tab: ' + salah.getName() + '\n' +
     'Detected layout: ' + layout + '\n' +
+    'Today cutoff: ' + todayIso + '\n' +
     'Grid rows checked: ' + SALAH_D1_GRID_DAYS + '\n' +
     'Date rows found: ' + dateRows + '\n' +
+    'Rows eligible for export: ' + eligibleRows + '\n' +
+    'Future rows skipped: ' + futureRowsSkipped + '\n' +
     'Logged prayer cells: ' + loggedCells + '\n' +
     'Qaza cells: ' + qazaCells + '\n\n' +
     'If this looks right, run buildSalahD1ExportSql().'
@@ -62,21 +80,21 @@ function buildSalahD1ExportSql() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var salah = _salahD1GetSourceSheet_(ss);
 
-  if (!salah) {
-    _salahD1Alert('Salah tab not found. Tried: "' + SALAH_D1_PRIMARY_TAB + '" and "' + SALAH_D1_FALLBACK_TAB + '"');
-    return;
-  }
+  if (!salah) return;
 
   var sourceTab = salah.getName();
   var now = new Date();
+  var todayIso = _salahD1TodayIso_();
   var exportedAt = Utilities.formatDate(now, SALAH_D1_TZ, "yyyy-MM-dd'T'HH:mm:ssXXX");
   var exportBatchId = 'salah_export_' + Utilities.formatDate(now, SALAH_D1_TZ, 'yyyyMMdd_HHmmss');
   var sourceLayout = _salahD1DetectLayout_(salah);
-  var rows = _salahD1ReadRows_(salah);
+
+  var readResult = _salahD1ReadRows_(salah, todayIso);
+  var rows = readResult.rows;
   var prayerTimes = _salahD1ReadPrayerTimes_(salah, now);
 
   var sql = [];
-  var rowsRead = 0;
+  var rowsRead = rows.length;
   var rowsWritten = 0;
 
   sql.push('-- Salah D1 Export');
@@ -85,6 +103,8 @@ function buildSalahD1ExportSql() {
   sql.push('-- Source version: ' + SALAH_D1_SOURCE_VERSION);
   sql.push('-- Exporter: ' + SALAH_D1_EXPORT_VERSION);
   sql.push('-- Batch: ' + exportBatchId);
+  sql.push('-- Today cutoff: ' + todayIso);
+  sql.push('-- Future rows skipped: ' + readResult.futureRowsSkipped);
   sql.push('-- Copy only SQL rows into Cloudflare D1 Console. Comments are safe but optional.');
 
   var dailyStatements = [];
@@ -92,10 +112,6 @@ function buildSalahD1ExportSql() {
   var recoveryStatements = [];
 
   rows.forEach(function(row) {
-    if (!row.day) return;
-
-    rowsRead++;
-
     dailyStatements.push(_salahD1DailyInsertSql_(row, exportBatchId, exportedAt, sourceLayout, sourceTab));
     rowsWritten++;
 
@@ -117,7 +133,7 @@ function buildSalahD1ExportSql() {
     exportedAt: exportedAt,
     rowsRead: rowsRead,
     rowsWritten: rowsWritten,
-    notes: 'Generated from ' + sourceTab + ' rows 6-36. No direct D1 mutation by Apps Script.'
+    notes: 'Generated from ' + sourceTab + ' rows 6-36. Export limited to day <= ' + todayIso + '. No direct D1 mutation by Apps Script.'
   }));
 
   if (prayerTimes) {
@@ -132,10 +148,14 @@ function buildSalahD1ExportSql() {
   _salahD1WriteExportSheet_(ss, sql, {
     exportBatchId: exportBatchId,
     exportedAt: exportedAt,
-    rowsRead: rowsRead,
-    rowsWritten: rowsWritten,
+    sourceTab: sourceTab,
     sourceLayout: sourceLayout,
-    sourceTab: sourceTab
+    todayIso: todayIso,
+    gridRowsChecked: SALAH_D1_GRID_DAYS,
+    dateRowsFound: readResult.dateRowsFound,
+    rowsRead: rowsRead,
+    futureRowsSkipped: readResult.futureRowsSkipped,
+    sqlRowsWritten: sql.length
   });
 
   _salahD1Alert(
@@ -143,9 +163,11 @@ function buildSalahD1ExportSql() {
     'Tab: ' + SALAH_D1_EXPORT_TAB + '\n' +
     'Source: ' + sourceTab + '\n' +
     'Batch: ' + exportBatchId + '\n' +
-    'Rows read: ' + rowsRead + '\n' +
+    'Today cutoff: ' + todayIso + '\n' +
+    'Rows eligible for export: ' + rowsRead + '\n' +
+    'Future rows skipped: ' + readResult.futureRowsSkipped + '\n' +
     'SQL rows written: ' + sql.length + '\n\n' +
-    'Open D1_Salah_Export and copy SQL from row 10 downward.'
+    'Open D1_Salah_Export and copy SQL from row 12 downward.'
   );
 }
 
@@ -158,13 +180,38 @@ function appendSalahD1ExportMenu() {
 }
 
 function _salahD1GetSourceSheet_(ss) {
-  return ss.getSheetByName(SALAH_D1_PRIMARY_TAB) || ss.getSheetByName(SALAH_D1_FALLBACK_TAB);
+  var candidates = [
+    SALAH_D1_PRIMARY_TAB,
+    SALAH_D1_SECONDARY_TAB,
+    SALAH_D1_FALLBACK_TAB
+  ];
+
+  for (var i = 0; i < candidates.length; i++) {
+    var sheet = ss.getSheetByName(candidates[i]);
+    if (sheet) return sheet;
+  }
+
+  var names = ss.getSheets().map(function(sheet) {
+    return '[' + sheet.getName() + ']';
+  }).join('\n');
+
+  _salahD1Alert(
+    'Salah source tab not found.\n\n' +
+    'Tried:\n' +
+    candidates.map(function(name) { return '[' + name + ']'; }).join('\n') +
+    '\n\nAvailable tabs:\n' +
+    names
+  );
+
+  return null;
 }
 
-function _salahD1ReadRows_(salah) {
+function _salahD1ReadRows_(salah, todayIso) {
   var values = salah.getRange(SALAH_D1_GRID_START_ROW, 1, SALAH_D1_GRID_DAYS, 11).getValues();
   var displayValues = salah.getRange(SALAH_D1_GRID_START_ROW, 1, SALAH_D1_GRID_DAYS, 11).getDisplayValues();
   var rows = [];
+  var dateRowsFound = 0;
+  var futureRowsSkipped = 0;
 
   for (var i = 0; i < SALAH_D1_GRID_DAYS; i++) {
     var sourceRow = SALAH_D1_GRID_START_ROW + i;
@@ -173,6 +220,13 @@ function _salahD1ReadRows_(salah) {
 
     var day = _salahD1DateToIso_(row[0]);
     if (!day) continue;
+
+    dateRowsFound++;
+
+    if (day > todayIso) {
+      futureRowsSkipped++;
+      continue;
+    }
 
     var dayOfMonth = Number(Utilities.formatDate(row[0], SALAH_D1_TZ, 'd'));
 
@@ -242,7 +296,11 @@ function _salahD1ReadRows_(salah) {
     rows.push(daily);
   }
 
-  return rows;
+  return {
+    rows: rows,
+    dateRowsFound: dateRowsFound,
+    futureRowsSkipped: futureRowsSkipped
+  };
 }
 
 function _salahD1BuildPrayerEntry_(prayerName, rawCode, normalizedCode, day, sourceRow, sourceColumn) {
@@ -457,28 +515,34 @@ function _salahD1WriteExportSheet_(ss, sql, meta) {
   out.getRange(4, 2).setValue(meta.sourceTab);
   out.getRange(5, 1).setValue('Source Layout');
   out.getRange(5, 2).setValue(meta.sourceLayout);
-  out.getRange(6, 1).setValue('Rows Read');
-  out.getRange(6, 2).setValue(meta.rowsRead);
-  out.getRange(7, 1).setValue('SQL Rows Written');
-  out.getRange(7, 2).setValue(sql.length);
-  out.getRange(8, 1).setValue('Instruction');
-  out.getRange(8, 2).setValue('Copy SQL from row 10 downward. Do not copy metadata rows.');
+  out.getRange(6, 1).setValue('Today Cutoff');
+  out.getRange(6, 2).setValue(meta.todayIso);
+  out.getRange(7, 1).setValue('Date Rows Found');
+  out.getRange(7, 2).setValue(meta.dateRowsFound);
+  out.getRange(8, 1).setValue('Rows Eligible For Export');
+  out.getRange(8, 2).setValue(meta.rowsRead);
+  out.getRange(9, 1).setValue('Future Rows Skipped');
+  out.getRange(9, 2).setValue(meta.futureRowsSkipped);
+  out.getRange(10, 1).setValue('SQL Rows Written');
+  out.getRange(10, 2).setValue(meta.sqlRowsWritten);
+  out.getRange(11, 1).setValue('Instruction');
+  out.getRange(11, 2).setValue('Copy SQL from row 12 downward. Do not copy metadata rows.');
 
-  out.getRange(9, 1).setValue('line_no');
-  out.getRange(9, 2).setValue('sql_statement');
+  out.getRange(12, 1).setValue('line_no');
+  out.getRange(12, 2).setValue('sql_statement');
 
   var outputRows = sql.map(function(statement, idx) {
     return [idx + 1, statement];
   });
 
   if (outputRows.length > 0) {
-    out.getRange(10, 1, outputRows.length, 2).setValues(outputRows);
+    out.getRange(13, 1, outputRows.length, 2).setValues(outputRows);
   }
 
-  out.setColumnWidth(1, 90);
+  out.setColumnWidth(1, 180);
   out.setColumnWidth(2, 1400);
-  out.getRange(1, 1, 9, 2).setFontWeight('bold');
-  out.getRange(10, 2, Math.max(outputRows.length, 1), 1)
+  out.getRange(1, 1, 12, 2).setFontWeight('bold');
+  out.getRange(13, 2, Math.max(outputRows.length, 1), 1)
     .setWrap(false)
     .setFontFamily('Roboto Mono')
     .setFontSize(9);
@@ -507,20 +571,25 @@ function _salahD1DailyCounts_(entries) {
 }
 
 function _salahD1NormalizeCode_(value) {
-  var v = String(value || '').trim();
-  var compact = v.replace(/\s+/g, '').toLowerCase();
+  var raw = String(value || '').trim();
+  if (!raw) return '';
+
+  var compact = raw
+    .toLowerCase()
+    .replace(/[·•･.\-_'’`]/g, '')
+    .replace(/\s+/g, '');
 
   if (!compact) return '';
   if (compact === 'm' || compact === 'masjid') return 'M';
   if (compact === 'j' || compact === 'jamaat') return 'J';
   if (compact === 'h' || compact === 'home') return 'H';
-  if (compact === 'hu' || compact === 'homeu') return 'HU';
+  if (compact === 'hu' || compact === 'homeu' || compact === 'homeudhr' || compact === 'homeuzr') return 'HU';
   if (compact === 'w' || compact === 'work') return 'W';
-  if (compact === 'wu' || compact === 'worku') return 'WU';
+  if (compact === 'wu' || compact === 'worku' || compact === 'workudhr' || compact === 'workuzr') return 'WU';
   if (compact === 'l' || compact === 'late') return 'L';
   if (compact === 'q' || compact === 'qaza') return 'Q';
 
-  return v;
+  return raw;
 }
 
 function _salahD1ScoreValue_(normalizedCode) {
@@ -558,6 +627,10 @@ function _salahD1DetectLayout_(salah) {
   if (lastCol >= 9 && lastCol <= 11) return 'v2.0+';
 
   return 'fresh';
+}
+
+function _salahD1TodayIso_() {
+  return Utilities.formatDate(new Date(), SALAH_D1_TZ, 'yyyy-MM-dd');
 }
 
 function _salahD1DateToIso_(value) {
