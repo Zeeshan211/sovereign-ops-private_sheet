@@ -1,761 +1,476 @@
-# SOVEREIGN_STATE.md
+## 2026-05-09 Closeout — Finance Audit Recovery + Smart Layout Stabilization
 
-## 2026-05-08 Closeout — Life OS Shell Expansion
-
-Status: Life OS Shell phase started after Finance Core build arc.
-Last updated: 2026-05-08  
-Project: Sovereign Life OS  
-Current mode: Finance Core built; Life OS shell expansion started  
-State source: reconstructed after accidental deletion  
-Status honesty: Functionally built where marked live; not final-audit certified unless explicitly stated.
+Status: PATH A Finance Audit Correction / Recovery was active.
+Last updated: 2026-05-09
+Project: Sovereign Life OS
+Current mode: Finance technical certification mostly cleared; UI smart-layout stabilization in progress.
+State source: live browser/API verification from operator + source reads through session PAT.
+Status honesty: Finance core logic is technically certified where marked. Some UI smart-layout ships were provided but still need final live visual confirmation if not already deployed by operator.
 
 ---
 
-## 1. Current Project Standing
+## 1. Session Summary
 
-Sovereign Ops has moved from a Finance-only app into the beginning of a broader Sovereign Life OS.
+PATH A Finance was selected after Secure Boot.
 
-Finance is the first live cockpit.
+Goal:
+- Re-audit Finance.
+- Clear uncertified layers.
+- Recover messy/cut-off UI.
+- Move Finance toward production-grade readiness without touching D1/schema unnecessarily.
 
-Life OS shell has started so Finance, Salah, Habits, Mission, and AI can exist as separate domains without contaminating each other.
-
-Current high-level status:
-
-- Finance Core: functionally built and live
-- Final Finance audit certification: pending
-- Life OS root Command Centre: live
-- Salah Cockpit Shell: live
-- Habits Cockpit Shell: prepared/pending live confirmation unless separately deployed
-- Mission Cockpit Shell: prepared/pending live confirmation unless separately deployed
-- AI Curator Shell: prepared/pending live confirmation unless separately deployed
-- Real Salah data export: not started
-- Real Habits data export: not started
-- Mission data export: not started
-- AI Curator live decision queue: not started
-- Telegram relay: not started
+Hard boundaries preserved:
+- No direct repo writes by Glean.
+- No GitHub App / Code Writer request.
+- No D1/schema mutation during UI cleanup.
+- No ledger mutation.
+- Full-file rewrites only for code files.
+- Finance only; Salah was not touched.
 
 ---
 
-## 2. Governance / Operating Rules
+## 2. Finance Certification Progress
 
-### GitHub access
+### Certified / passed during this session
 
-- Glean must not ask the operator to connect GitHub App, GitHub integration, or Code Writer to personal repos.
-- Use session-only read-only PAT when repo reads are needed.
-- Never store or echo PAT.
-- Never write directly to personal GitHub.
-- Deliver manual copy-paste instructions only:
-  - exact edit/create URL
-  - full-file rewrite
-  - commit message
-  - deploy wait
-  - verify URL
-  - acceptance checklist
+1. Category Recovery
+- `/api/categories` confirmed live.
+- Live category count: 13.
+- Categories confirmed:
+  - groceries
+  - food_dining
+  - transport
+  - bills_utilities
+  - health
+  - bank_fee
+  - atm_fee
+  - credit_card
+  - debt_payment
+  - salary_income
+  - manual_income
+  - transfer
+  - misc
+- Do not seed categories again.
 
-### Coding delivery rule
+2. Transactions API
+- `/api/transactions` confirmed live.
+- Version confirmed: `v0.1.4`.
+- Visible transactions confirmed around session: 104 initially, later full ledger counts showed 105 active / 141 total with 36 hidden reversals depending endpoint scope.
+- Hidden reversal count confirmed: 36.
+- Transaction category save was later live-proven by real row:
+  - `tx_1778251033577_bf2hy5`
+  - date `2026-05-08`
+  - amount `160`
+  - account_id `meezan`
+  - category_id `groceries`
 
-- Sovereign Ops code/state/file changes must be full-file rewrites only.
-- No surgical snippets for code files.
-- For known safe data-state corrections, guarded SQL may be used only when code does not need to change.
-- No sandbox download files unless explicitly requested.
+3. Store / Add Transaction Path
+- `js/store.js v0.2.4` deployed and confirmed live.
+- `window.store.version` returned `v0.2.4`.
+- `window.store.categories.map(c => c.id)` returned all 13 live D1 categories.
+- `window.store.clearOfflineQueue()` returned `{ok: true, cleared: true}`.
+- Stale fallback categories removed.
+- Silent offline write queue remains disabled.
+- Add Transaction category path is certified and live-proven.
 
-### Ship governance
+4. Balance Truth
+- `/api/balances v0.5.3` confirmed live.
+- Debt split working:
+  - payable debt = debts.kind `owe`
+  - receivables = debts.kind `owed`
+  - all active debt = diagnostic only
+- Confirmed live values during session:
+  - Liquid cash: Rs 8,476.32
+  - CC outstanding: Rs 79,626.33
+  - Payable debt: Rs 123,500
+  - Receivables: Rs 18,320
+  - All active debt remaining: Rs 141,820 diagnostic only
+  - True burden: -Rs 176,330.01
+- Formula exposed:
+  - `true_burden = (liquid - cc_outstanding) - payable_debt_remaining + total_receivables`
 
-- Normal Mode: max 8 ships.
-- Production Deadline Mode must be explicitly activated before expanding ship scope.
-- Emergency Repair Mode only for live blocking/corrupting issues.
-- Read-only audit/planning/diagnosis does not count as code ship.
-- State closeout must be saved after major progress.
+5. Credit Card
+- `/api/cc v0.3.1` confirmed live.
+- `/api/cc total_outstanding` matched `/api/balances cc_outstanding`.
+- Confirmed:
+  - CC outstanding: Rs 79,626.33
+  - Credit limit: Rs 100,000
+  - Utilization: 79.6%
+  - Due date: 2026-06-06
+  - Minimum payment: Rs 3,981.32
+  - Minimum source: estimated 5% because official min payment is not configured
+- CC layer certified.
 
-### No fake data rule
+6. Snapshots
+- `/api/snapshots v0.2.1` confirmed live.
+- Snapshot list returned:
+  - id: `snap-2026-05-08T10-30-13`
+  - label: `manual-before-next-finance-fix`
+  - status: complete
+  - row_count_total: 171
+  - created_by: operator
+  - created_at: 2026-05-08 10:30:14
+- Snapshot detail honesty confirmed.
+- Snapshot scope is partial, not full-system rollback.
+- Included tables:
+  - accounts
+  - bills
+  - budgets
+  - categories
+  - debts
+  - goals
+  - reconciliation
+  - transactions
+- Excluded important tables:
+  - audit_log
+  - salary
+  - salary_forecast_config
+  - salary_payslips
+  - salary_payslip_components
+  - nano_loans
+  - salah tables
+  - settings
+  - snapshots
+  - snapshot_data
+- Snapshot honesty certified.
+- Full-system rollback coverage is not certified.
 
-- Do not show fake live data for domains not exported yet.
-- Placeholder shell text is allowed only when clearly labeled as not connected.
-- AI must not invent state.
-- Telegram relay must eventually send only curated messages from real data.
+7. Forecast
+- `/api/forecast v0.2.1` deployed and confirmed live.
+- Hard-coded payslip source fixed.
+- `active_payslip_id` still equals `payslip_2026_04`, but now source is config:
+  - `salary_forecast_config.active_payslip_id`
+- `hardcoded_payslip_removed: true`
+- `bill_paid_cycle_logic: due_cycle_month`
+- `ledger_mutation: false`
+- Health all true.
+- Manual variables separated from conservative baseline.
+- MBO default is 0 and scenario-only.
+- WFH USD 30 included using live FX.
+- Forecast layer certified.
 
----
-
-## 3. Finance Core Build Arc — Completed This Session
-
-Status: Functionally built, live, pending final audit certification.
-
-Completed ships:
-
-1. `/api/forecast v0.2.0` — live
-2. `forecast.html v0.2.0` — live
-3. `/api/safety v0.2.0` — live
-4. `forecast.html v0.3.0` Safety display — live
-5. `/api/insights v0.3.0` — live
-6. `insights.html v0.4.0` — live
-7. `/api/monthly-close v0.1.0` — live
-8. `monthly-close.html v0.1.0` — live
-
-Finance brain standing:
-
-- Forecast brain: live
-- Safety brain: live
-- Insights brain: live
-- Monthly Close brain: live
-- Core Finance: functionally built
-- Final audit certification: not complete yet
-
----
-
-## 4. Finance Known Audit-Hardening Items
-
-These must be fixed before calling Finance 100% audit-certified.
-
-1. `/api/forecast` still hard-codes `payslip_2026_04`.
-   - Needs config-driven `active_payslip_id`.
-   - Salary forecast must not remain fixed to April payslip forever.
-
-2. Forecast bill paid-cycle logic can skip next-month obligations.
-   - Current logic can treat a bill as paid because it was paid in current month.
-   - Needs due-cycle-aware paid logic.
-
-3. `/api/monthly-close` reconciliation scope is too narrow.
-   - Current reconciliation freshness may use month-window transactions.
-   - Final audit should use full-ledger transaction truth for stale declaration checks.
-
-4. Navigation/Hub alignment was in progress.
-   - Finance brain pages exist.
-   - Life OS shell now owns root.
-   - Confirm shared navigation still matches current route model.
-
-5. State file was accidentally deleted and reconstructed.
-   - This file is the restored durable state.
-
-Finance status wording:
-
-- Finance is functionally built.
-- Finance is not final-audit certified.
-- Next Finance work should be audit-hardening and UI consistency, not new Finance feature expansion.
-
----
-
-## 5. Finance Current Route Model
-
-Finance live-data routes:
-
-- `/forecast.html`
-- `/insights.html`
-- `/monthly-close.html`
-- `/api/forecast`
-- `/api/safety`
-- `/api/insights`
-- `/api/monthly-close`
-
-Other Finance routes still part of cockpit:
-
-- `/transactions.html`
-- `/accounts.html`
-- `/bills.html`
-- `/debts.html`
-- `/cc.html`
-- `/salary.html`
-- `/reconciliation.html`
-- `/atm.html`
-- `/nano-loans.html`
-- `/audit.html`
-- `/snapshots.html`
-- `/charts.html`
-- `/budgets.html`
-- `/goals.html`
-
----
-
-## 6. Life OS Expansion Plan
-
-Status: Started after Finance Core build arc.
-
-Core architecture decision:
-
-- Finance remains isolated as its own cockpit.
-- Salah, Habits, Mission, Health, Knowledge, and AI must not be mixed into Finance UI.
-- Main Command Centre sits above all domains and shows only summary/action state.
-- Each domain keeps its own route, schema, API, UI identity, and logic.
-- AI Curator reads across domain summaries and creates decision/briefing output.
-- Telegram Bot relays only curated AI messages, not raw noisy data.
-
-Domain route model:
-
-Completed / prepared this phase:
-
-1. Root Life OS Command Centre created at `/`.
-2. Finance remains isolated as its own live-data cockpit.
-3. Salah Cockpit Shell created at `/salah.html`.
-4. Habits Cockpit Shell prepared at `/habits.html`.
-5. Mission Cockpit Shell prepared at `/mission.html`.
-6. AI Curator Shell prepared at `/ai.html`.
-7. Command Centre link alignment v0.1.2 prepared to link Finance, Salah, Habits, Mission, and AI from root.
-
-Domain separation contract:
-
-- Finance must not show Salah logs, Habit logs, or Mission internals.
-- Salah must not show balances, bills, debts, salary, Credit Card, reconciliation, or Finance widgets.
-- Habits must not show finance data or Salah recovery logic.
-- Mission may show direction and priorities but must not expose raw private domain tables.
-- AI Curator reads domain summaries only and must not invent live state.
-- Telegram relay remains future work and should send only curated messages.
-
-Current route model:
-
-- `/` = Main Command Centre
-- `/forecast.html`, `/insights.html`, `/monthly-close.html` = Finance brain pages
-- `/salah.html` = Salah shell
-- `/habits.html` = Habits shell
-- `/mission.html` = Mission shell
-- `/ai.html` = AI Curator shell
-
-Future route model may later move Finance under `/finance`, but current production-compatible model keeps existing Finance pages.
+8. Monthly Close API
+- `/api/monthly-close v0.1.1` deployed and confirmed live.
+- Old blocker cleared.
+- Month activity and full-ledger truth are now separated.
+- Confirmed:
+  - `month_activity_scope` present
+  - `full_ledger_scope` present
+  - `reconciliation.balance_scope: full_ledger`
+  - `reconciliation.stale_check_scope: full_ledger`
+  - `reconciliation.drift_check_scope: full_ledger`
+  - `month_activity_scope_separated: true`
+  - `full_ledger_truth_scope_separated: true`
+- Monthly Close backend logic certified.
 
 ---
 
-## 7. Life OS Shell Progress
+## 3. Production Readiness Truth
 
-Completed / confirmed:
+Important distinction locked:
 
-1. Root Life OS Command Centre created at `/`.
-2. Finance remains isolated as its own live-data cockpit.
-3. Salah Cockpit Shell created at `/salah.html`.
-4. Salah shell confirmed live.
-5. Life OS root confirmed live.
+Finance technical system certification and money close readiness are separate.
 
-Prepared / pending confirmation unless deployed separately:
+### Technical system certification
 
-1. Habits Cockpit Shell at `/habits.html`.
-2. Mission Cockpit Shell at `/mission.html`.
-3. AI Curator Shell at `/ai.html`.
-4. Command Centre Link Alignment v0.1.2 to link:
-   - Finance
-   - Salah
-   - Habits
-   - Mission
-   - AI
+Status: Mostly certified / passed for core logic.
 
-Current data status:
+Certified:
+- balances
+- categories
+- transaction guards
+- add transaction category path
+- credit card liability semantics
+- snapshot honesty
+- forecast hardening
+- monthly-close scope separation
 
-- Finance: live-data backed.
-- Salah: shell only, no live prayer data yet.
-- Habits: shell only, no live habit data yet.
-- Mission: shell only, no live mission data yet.
-- AI: shell only, no live decision queue yet.
+### Money close readiness
 
-Next build queue:
+Status: Not ready because real financial state is unsafe.
 
-1. Finish/verify Command Centre Link Alignment v0.1.2.
-2. Start Salah Export Layer 2A.
-3. Build `/api/salah/today`.
-4. Build `/api/salah/insights`.
-5. Wire `salah.html` to real Salah API data.
-6. Start Habits Export Layer 3A after Salah foundation is stable.
+Current real-world blockers:
+- `forecast_has_unsafe_date`
+- `forecast_has_unsafe_days`
+- `safety_status_critical`
 
----
+Warnings:
+- `undeclared_accounts`
+- `stale_account_declarations`
 
-## 8. Domain Separation Contract
+Known live safety readings:
+- Safety status: critical
+- Forecast runway: unsafe_in_30d
+- First unsafe date: 2026-05-15
+- Unsafe days count: 18
+- Lowest projected balance: Rs 1,755.26
+- Lowest projected balance date: 2026-06-01
+- Cash after salary + obligations: Rs 1,755.26
+- Forecast confidence reduced by undeclared/stale accounts
 
-This contract is locked for Life OS.
-
-### Main Command Centre
-
-Allowed:
-
-- Domain summary cards
-- What Needs Action
-- Today Timeline
-- Decision Queue
-- Quick Actions
-- High-level status only
-
-Not allowed:
-
-- Full finance ledger table
-- Full Salah history
-- Full habit logs
-- Raw private mission tables
-- Fake AI decisions
-
-### Finance
-
-Allowed:
-
-- Money
-- Forecast
-- Safety
-- Insights
-- Monthly close
-- Accounts
-- Transactions
-- Bills
-- Debts
-- Credit Card
-- Reconciliation
-
-Not allowed:
-
-- Salah logs
-- Habit logs
-- Mission internals
-- Spiritual/religious tracking widgets
-
-### Salah
-
-Allowed:
-
-- Today prayer status
-- Prayer timeline
-- Missed/Qaza recovery
-- Streaks
-- Weekly reflection
-- Salah insights
-
-Not allowed:
-
-- Balances
-- Bills
-- Debts
-- Salary
-- Credit Card
-- Reconciliation
-- Finance widgets
-- Fake prayer status
-
-### Habits
-
-Allowed:
-
-- Daily checklist
-- Momentum
-- Weak habits
-- Strong habits
-- Recovery suggestions
-- Workday/off-day pattern
-
-Not allowed:
-
-- Finance data
-- Salah recovery logic
-- Fake completion scores
-
-### Mission
-
-Allowed:
-
-- Current priority
-- Active project
-- Next milestone
-- Blockers
-- Weekly direction
-- Roadmap
-
-Not allowed:
-
-- Raw private domain tables
-- Full ledger exposure
-- Fake roadmap status
-
-### AI Curator
-
-Allowed:
-
-- Read domain summaries
-- Produce briefings
-- Produce decision queue
-- Prepare Telegram-ready curated messages
-
-Not allowed:
-
-- Invent live state
-- Direct mutation first
-- Raw unrestricted private table reading by default
-- Noisy Telegram relay
+This does not mean Finance code is broken.
+It means the Finance system is correctly detecting real money risk.
 
 ---
 
-## 9. Recommended Build Layers
+## 4. UI / Smart Layout Progress
 
-### Layer 1 — Life OS Shell / Main Command Centre
+Problem discovered:
+- Pages were being cut off or not scrollable after adding fixed sidebar navigation.
+- Root cause: fixed sidebar + page widths using full viewport assumptions like `calc(100vw - 32px)`.
+- Some pages acted independently and fought the app shell.
+- Need global smart layout contract, not random page-by-page patches.
 
-Status: started/live.
+### Navigation / App Shell
 
-Scope:
+1. `js/nav.js v1.1.0`
+- Grouped Finance navigation shell created.
+- Desktop groups:
+  - Dashboard
+  - Money
+  - Obligations
+  - Planning
+  - Records
+- Mobile bottom nav:
+  - Hub
+  - Add
+  - Txns
+  - Bills
+  - Forecast
+  - More
+- Confirmed live by operator.
+- Problem: More drawer could get stuck open.
 
-- Main Command Centre
-- Domain cards
-- Separate nav sections
-- Finance remains accessible
-- Salah/Habits/Mission/AI shells visible but not fake-live
+2. `js/nav.js v1.1.1`
+- Hotfix provided to force hidden drawer/backdrop closed.
+- Added hidden CSS guard:
+  - `.sf-more-backdrop[hidden]`
+  - `.sf-more-drawer[hidden]`
+- Added desktop guard to hide mobile drawer/backdrop on desktop.
+- Superseded by v1.1.2.
 
-### Layer 2 — Salah Export
+3. `js/nav.js v1.1.2`
+- Smart Layout Guard provided as Shipment 1.
+- Purpose:
+  - stop pages cutting off beside sidebar
+  - remove body padding layout bug
+  - apply safe width rules to `main`, `.page`, `.app-page`
+  - add table/overflow wrappers
+  - add overflow diagnostic `document.documentElement.dataset.sfOverflow`
+- Verification required:
+  - `window.SovereignNav.version` should return `1.1.2`
+  - `document.documentElement.dataset.sfOverflow` should return `false`
+- Live confirmation not explicitly captured in state. Verify next session if uncertain.
 
-Status: next real data layer.
+### Monthly Close UI
 
-Scope:
+1. `monthly-close.html v0.2.0`
+- Full rewrite provided to split:
+  - System Certification
+  - Money Close Readiness
+- This made the page clearer but still too dense and contributed to layout concerns.
 
-- D1 schema for Salah logs/status/recovery
-- `/api/salah/today`
-- `/api/salah/insights`
-- `salah.html` live data wiring
-- Calm separate design
-- No finance widgets
-- No fake prayer data
+2. `monthly-close.html v0.2.1`
+- Shipment 2 provided.
+- Uses `nav.js v1.1.2`.
+- Makes Monthly Close compact and production-readable.
+- Top screen:
+  - System Certification
+  - Money Close Readiness
+  - Safety
+  - First unsafe date
+  - Liquid
+  - CC
+  - Top Close Blockers
+  - Next Action
+- Detailed sections moved into expandable panels:
+  - System Certification Gates
+  - Forecast Safety Details
+  - Month Activity
+  - Bills, Debts, Receivables
+  - Reconciliation
+  - Scope Proof
+- Verification required:
+  - no cut-off
+  - page scrolls normally
+  - `dataset.sfOverflow` false
+  - details expand/collapse correctly
+- Live confirmation not explicitly captured in state. Verify next session if uncertain.
 
-### Layer 3 — Habits Export
+### Hub / Root Page
 
-Status: after Salah foundation.
-
-Scope:
-
-- D1 schema for habit definitions/logs/daily status
-- `/api/habits/today`
-- `/api/habits/insights`
-- `habits.html` live data wiring
-- Workday/off-day pattern support
-- No finance contamination
-
-### Layer 4 — Mission Export
-
-Status: planned.
-
-Scope:
-
-- Mission/project/milestone schema or API
-- `/api/mission/status`
-- `mission.html` live data wiring
-- Direction and roadmap layer
-
-### Layer 5 — AI Curator
-
-Status: planned after at least Finance + Salah + Habits have real APIs.
-
-Scope:
-
-- `/api/ai/briefing`
-- `/api/ai/decision-queue`
-- Reads Finance + Salah + Habits + Mission summaries
-- Produces curated decisions, not generic advice
-
-### Layer 6 — Telegram Relay
-
-Status: future.
-
-Scope:
-
-- `/api/telegram/relay`
-- relay log
-- daily briefing
-- prayer recovery prompt
-- habit nudges
-- finance alerts
-- decision prompts
-- send only curated messages
-
----
-
-## 10. Next Build Queue
-
-Immediate next queue:
-
-1. Verify Command Centre Link Alignment v0.1.2 if deployed.
-2. Verify `/habits.html`, `/mission.html`, `/ai.html` if deployed.
-3. State closeout after verification.
-4. Start Salah Export Layer 2A.
-
-Salah Export Layer 2A target:
-
-- Create D1 schema for Salah logs/status/recovery.
-- Preserve separation from Finance.
-- No fake prayer data.
-- No finance contamination.
-- No ledger or finance formula changes.
-
-Governance note:
-
-- No direct GitHub write access.
-- Use session-only PAT reads when needed.
-- Deliver manual full-file rewrites only.
-- Provide exact edit URLs, commit messages, deploy wait, and verification steps.
-
-Suggested Salah tables:
-
-- `salah_logs`
-- `salah_daily_status`
-- `salah_recovery`
-- `salah_insights`
-
-Suggested Salah APIs:
-
-- `/api/salah/today`
-- `/api/salah/insights`
-
-Suggested Salah live UI sections:
-
-- Today’s Prayers
-- Recovery Lane
-- Weak Prayer Pattern
-- Streaks
-- Weekly Reflection
-- Source freshness
-- AI summary later
+`index.html v0.2.0`
+- Shipment 3 provided.
+- Purpose:
+  - make Hub a clean command center
+  - update to `nav.js v1.1.2`
+  - remove rigid grid behavior
+  - keep first screen compact
+  - group daily tools and deeper tools
+- Top Hub now intended to show:
+  - Liquid
+  - CC pressure
+  - Debt truth
+  - System guard
+  - What needs action
+  - Daily tools
+  - Planning and obligations collapsed
+  - Records and safety collapsed
+- Verification required:
+  - root not cut off
+  - page scrolls normally
+  - KPI cards wrap
+  - daily tools are compact
+  - no horizontal scroll
+- Live confirmation not captured in state. Verify next session if uncertain.
 
 ---
 
-## 11. Finance Next Audit Queue
+## 5. Ship Ledger / Governance Note
 
-When returning to Finance audit-hardening:
+Latest session entered Finance UI recovery and used multiple code ships.
 
-1. Forecast payslip source:
-   - Replace hard-coded `payslip_2026_04` with active config-driven payslip ID.
+Known shipped/provided items in this recovery arc:
+1. `js/store.js v0.2.4`
+2. `/api/forecast v0.2.1`
+3. `/api/monthly-close v0.1.1`
+4. `js/nav.js v1.1.0`
+5. `monthly-close.html v0.2.0`
+6. `js/nav.js v1.1.1`
+7. `js/nav.js v1.1.2`
+8. `monthly-close.html v0.2.1`
+9. `index.html v0.2.0`
 
-2. Forecast bill paid-cycle:
-   - Fix due-cycle paid logic so next-month obligations are not skipped.
-
-3. Monthly Close reconciliation:
-   - Use full-ledger transaction truth for stale declaration checks.
-   - Consider splitting:
-     - `system_audit_readiness`
-     - `money_close_readiness`
-
-4. Navigation/route consistency:
-   - Ensure Life OS root and Finance pages do not fight each other.
-   - Ensure all links point to live pages.
-
-5. Final comprehensive audit:
-   - API route audit
-   - UI page audit
-   - Formula audit
-   - Reconciliation truth audit
-   - Ledger mutation audit
-   - Safety rule audit
-   - Manual variable/scenario audit
-   - Monthly Close audit readiness review
-   - Broken nav/link audit
-   - Final production readiness verdict
+Governance warning:
+- Ship count drift occurred in the conversation because emergency UI recovery/hotfixes happened after the normal ship cap was approached.
+- Do not continue shipping casually from this point.
+- Next session should reconcile actual deployed commits and ship count before more code.
+- If strict Normal Mode is active, ship lane should be treated as closed until a new valid window/session or explicit valid production/emergency mode.
+- Read-only audit and visual verification are allowed.
 
 ---
 
-## 12. Recent Confirmed Live Items
+## 6. Current Finance Route / Version Targets
 
-Confirmed by operator:
+Expected key targets after this recovery arc:
 
-- `/api/forecast v0.2.0` live
-- `forecast.html v0.2.0` live
-- `/api/safety v0.2.0` live
-- Safety display live
-- `/api/insights v0.3.0` live
-- `insights.html v0.4.0` live
-- `/api/monthly-close v0.1.0` live
-- `monthly-close.html v0.1.0` live
-- Life OS Shell root live
-- Salah Shell live
+APIs:
+- `/api/balances` = v0.5.3
+- `/api/transactions` = v0.1.4
+- `/api/categories` = live with 13 categories
+- `/api/cc` = v0.3.1
+- `/api/snapshots` = v0.2.1
+- `/api/forecast` = v0.2.1
+- `/api/monthly-close` = v0.1.1
+- `/api/safety` = v0.2.0
+- `/api/insights` = v0.3.0
 
-Prepared but confirm if not yet checked:
-
-- `habits.html`
-- `mission.html`
-- `ai.html`
-- `index.html v0.1.2` all section links
+Frontend:
+- `js/store.js` = v0.2.4
+- `js/nav.js` target = v1.1.2
+- `monthly-close.html` target = v0.2.1
+- `index.html` target = v0.2.0
+- `add.js` = v0.3.3
+- Other pages may still need smart layout conversion.
 
 ---
 
-## 13. Current Boot Routing — 2026-05-08
+## 7. Remaining Work
 
-After `boot vault` passes Secure Boot, offer two active paths and wait for operator choice.
+### Immediate next step
+
+Read-only verification only:
+1. Verify `js/nav.js v1.1.2` live.
+2. Verify `monthly-close.html v0.2.1` live.
+3. Verify `index.html v0.2.0` live.
+4. Check:
+   - no stuck drawer
+   - no horizontal overflow
+   - pages scroll normally
+   - `document.documentElement.dataset.sfOverflow` is `false`
+   - desktop sidebar does not cut content
+   - mobile More drawer opens/closes
+
+### Next UI conversion queue
+
+Do not ship until governance window is valid.
+
+Recommended next smart-layout pages:
+1. `forecast.html`
+2. `transactions.html`
+3. `add.html`
+4. `bills.html`
+5. `reconciliation.html`
+6. `cc.html`
+7. `salary.html`
+
+Principle:
+- Use the shared smart layout contract.
+- Keep top screen compact.
+- Collapse audit/deep tables.
+- Never use raw `100vw` or rigid grid that fights sidebar.
+- Tables must scroll inside panels, not the whole page.
+
+### Real money readiness queue
+
+To make Money Close ready:
+1. Reconcile stale accounts:
+   - cash
+   - meezan
+2. Declare active undeclared accounts:
+   - mashreq
+   - ubl
+   - easypaisa
+   - naya_pay
+3. Decide how to handle low/zero accounts:
+   - ubl_prepaid
+   - jazzcash
+   - js_bank
+   - alfalah
+4. Review forecast safety blockers:
+   - Mashal Rs 8,500 due 2026-05-15
+   - Imran Bhai Rs 115,000 due 2026-06-01
+5. If debt due behavior is not full-lump-sum, fix debt schedule/config rather than pretending safety is OK.
+
+---
+
+## 8. Boot Routing Update
+
+After `boot vault` passes Secure Boot, continue offering paths.
 
 ### PATH A — Finance Audit Correction / Recovery
 
-Status: Active but partially verified. Continue from verification and recovery, not from scratch.
-
-Current Finance state:
-
-- Emergency D1 repair completed for `debt_yusra`.
-- `/api/balances` v0.5.3 confirmed live.
-- `/api/transactions` v0.1.4 confirmed live.
-- Manual snapshots endpoint `/api/snapshots` v0.2.0 confirmed working.
-- `snapshots.html` manual snapshot UI confirmed working.
-- `transactions.html` semantic alignment confirmed working.
-- `js/add.js` v0.3.3 deployed/provided to stop phantom category fallback.
-- Categories table confirmed empty.
-- Category schema confirmed:
-  - id TEXT primary key
-  - name TEXT not null
-  - icon TEXT
-  - type TEXT
-  - parent_id TEXT
-  - monthly_budget REAL default 0
-  - color TEXT
-  - display_order INTEGER default 0
-
-Known Finance values from `/api/balances?debug=1`:
-
-- Liquid cash: Rs 8,636.32
-- CC outstanding: Rs 79,626.33
-- Payable debt: Rs 123,500
-- Receivables: Rs 18,320
-- All active debt remaining: Rs 141,820 diagnostic only
-- True burden: -Rs 176,170.01
-
-Finance corrections completed:
-
-- Debt/receivable split fixed.
-- Transaction account FK guards added.
-- Transaction UI semantics fixed.
-- Snapshot endpoint and UI created.
-- Add Transaction no longer shows fake D1 categories.
-
-Finance items provided but still need final verification:
-
-- `/api/debts` v0.3.1 FK guard
-- `/api/cc` v0.3.1 liability semantics
-- `/api/snapshots` v0.2.1 snapshot detail honesty
-- `js/nav.js` v1.0.19 emoji navigation restore
-- `index.html` v0.1.4 alive Finance Hub restore
-
-Next safe Finance actions:
-
-1. Verify live site visual recovery:
-   - `https://sovereign-finance.pages.dev/`
-   - Expected: emoji nav visible, alive Hub restored, balances v0.5.3 numbers correct.
-2. Seed D1 categories using confirmed schema.
-3. Verify Add Transaction can save Rs 159.99 Meezan transaction with category `Groceries`.
-4. Verify `/api/cc` matches `/api/balances` CC outstanding.
-5. Verify `/api/snapshots?id=snap-2026-05-08T10-30-13` exposes snapshot scope fields.
-6. Finalize Finance audit report and update state again.
-
-Finance hard rules:
-
-- Do not touch Salah while in Finance path unless operator explicitly switches.
-- No fake ledger smoke tests unless operator explicitly approves.
-- Full-file rewrites only for code.
-- Prefer guarded D1 SQL only for known data-state corrections.
-- Do not bulk mutate real ledger rows casually.
-
----
-
-### PATH B — Salah Today-Live Cleanup
-
-Status: Active but not fully verified. Continue from deployed-version verification, not from scratch.
-
-Completed:
-
-- Salah D1 schema/table foundation created earlier.
-- Bulk month export abandoned because SQL copy friction and future-row risk made it unsafe.
-- Real source tab identified: `🕌 Salah`.
-- Today-only D1 seed path chosen.
-- D1 seed for `2026-05-08` succeeded.
-- `/api/salah/log` v0.2.0 confirmed working by browser console POST.
-- `/api/salah/today` v0.2.0 confirmed returning live data for `2026-05-08`.
-
-Verified live Salah state from `/api/salah/today?day=2026-05-08`:
-
-- Fajr: Masjid, normalized `M`, score `2`, logged_at `2026-05-08T17:03:19+05:00`
-- Dhuhr: Masjid, normalized `M`, score `2`, logged_at `2026-05-08T16:59:56+05:00`
-- Asr: Home, normalized `H`, score `0.5`, logged_at `2026-05-08T17:00:24+05:00`
-- Maghrib: Home Udhr, normalized `HU`, score `0.8`
-- Isha: Home Udhr, normalized `HU`, score `0.8`
-- Jumuah: Yes, normalized `YES`, score `0.5`, logged_at `2026-05-08T16:59:42+05:00`
-- API reported total score: `6.6`
-- logged_count: `5`
-- masjid_count: `2`
-- home_count: `3`
-- udhr_count: `2`
-- qaza_count: `0`
-
-Salah product correction agreed:
-
-- Fard score must be separated from bonus prayers.
-- Fard = core `/10` from five daily prayers only:
-  - Fajr
-  - Dhuhr
-  - Asr
-  - Maghrib
-  - Isha
-- Bonus = Jumuah, Tahajjud, Witr, Ishraq, Duha, Awwabin, Nafl.
-- Qaza = recovery state.
-- Udhr = attribute, not location/category.
-- Charts must not double-count Udhr as a location slice.
-- Bonus prayers must never inflate the main Fard `/10` score.
-
-Provided but not confirmed deployed:
-
-- `functions/api/salah/log.js` v0.3.0 implementing corrected Fard / Bonus / Qaza / Udhr model.
-- `salah.html` v0.8.0 titled `Overflow-safe responsive cockpit`.
-- `functions/api/salah/today.js` still needs read-model cleanup.
-
-Next safe Salah actions:
-
-1. Verify currently deployed versions:
-   - `functions/api/salah/log.js`
-   - `functions/api/salah/today.js`
-   - `salah.html`
-2. Confirm whether `log.js v0.3.0` is actually deployed.
-3. If not deployed, deploy `log.js v0.3.0` full-file rewrite first.
-4. Rewrite/clean `functions/api/salah/today.js` so output includes:
-   - `fard_score`
-   - `fard_logged_count`
-   - `bonus_logged_count`
-   - `qaza_count`
-   - `udhr_count`
-   - clean chart data where Udhr is attribute, not location
-5. Verify `salah.html` has no horizontal scrollbar on operator screen.
-6. Only after logic is clean, continue UI inspiration polish.
-
-Salah hard rules:
-
-- Do not touch Finance while in Salah path unless operator explicitly switches.
-- Do not bulk-import future month rows.
-- Do not fake streaks/charts.
-- Full-file rewrites only for code changes.
-- Today-first verification before month expansion.
-
----
-
-## 14. Boot Vault Response Contract
-
-When Secure Boot passes, respond with the two active path choices below and wait for operator choice.
-
-### PATH A — Finance Audit Correction / Recovery
-
-Status: Active but partially verified.
+Status: Active; core logic certified; UI smart layout stabilization in progress.
 
 Next safe action:
-
-- Verify live site visual recovery.
-- Seed confirmed D1 categories.
-- Verify Add Transaction real category save.
-- Verify `/api/cc` and `/api/snapshots` corrections.
+- Do read-only live verification of latest UI ships.
+- Confirm nav v1.1.2, monthly-close v0.2.1, and index v0.2.0 are live.
+- Do not continue code ships until ship governance is reconciled.
+- If UI is stable, resume later with forecast.html smart-layout rewrite.
 
 Do not touch Salah while in Finance path unless operator explicitly switches.
 
 ### PATH B — Salah Today-Live Cleanup
 
-Status: Active but not fully verified.
+Status: unchanged from previous state.
 
 Next safe action:
-
 - Verify deployed versions for `functions/api/salah/log.js`, `functions/api/salah/today.js`, and `salah.html`.
-- Finish today read-model cleanup.
-- Validate UI no horizontal scrollbar.
+- Finish Salah today read-model cleanup.
+- Validate Salah UI no horizontal scrollbar.
 
 Do not touch Finance while in Salah path unless operator explicitly switches.
 
 ---
 
-## 15. Closeout Summary
+## 9. Closeout Truth
 
 Current truth:
-
-- Finance Core build arc is complete.
-- Finance is functional but not final-audit certified.
-- Life OS shell has started correctly.
-- Finance is no longer the whole website identity.
-- Salah is separated.
-- Habits/Mission/AI are planned as separated domains.
-- Next real system expansion should be Salah data export, not more Finance-only work unless operator chooses Finance audit recovery path.
-
-Next recommended action:
-
-1. Save this restored state file.
-2. Re-run `boot vault`.
-3. Choose PATH A or PATH B.
+- Finance core logic is no longer the main blocker.
+- Finance technical certification is strong across balances, categories, transactions, CC, forecast, snapshots, and monthly-close backend.
+- Money Close Readiness remains not ready because real safety and reconciliation state are not ready.
+- UI smart layout is now the active concern.
+- Recent UI recovery introduced and then corrected navigation/drawer/layout issues.
+- Latest provided targets are `nav.js v1.1.2`, `monthly-close.html v0.2.1`, and `index.html v0.2.0`.
+- Confirm those live before any new UI rewrite.
+- Ship lane should be treated cautiously/closed until governance is reconciled.
