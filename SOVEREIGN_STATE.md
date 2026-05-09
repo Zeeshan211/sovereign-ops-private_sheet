@@ -1,172 +1,179 @@
-## 2026-05-09 — Finance Recovery / Visual Work State
+## 2026-05-09 — Finance Command Centre QA Cockpit Progress
 
-### Current operating mode
+### Current status
 
-PATH A — Finance recovery / visual-only cleanup is active.
+Finance Command Centre work reached the frontend trial-gate milestone.
 
-Primary rule:
+Current confirmed sequence:
+1. Forecast + Monthly Close metadata cleanup shipped.
+2. Add Transaction clean UI + script alignment shipped.
+3. Command Centre v0.1 shell shipped.
+4. Command Centre v0.2 Real API Health layer shipped.
+5. Command Centre v0.3 UI Cleanliness + Metadata Scanner shipped.
+6. Command Centre v0.4 Impact Graph shipped.
+7. Preserve-first Command Centre v0.5 Readiness Rules shipped.
+8. Command Centre v0.6 Final Trial Gate was generated and treated as the final frontend gate ship.
 
-- Preserve original finance brain.
-- Preserve original balance logic.
-- Preserve original Credit Card logic.
-- Preserve original salary logic.
-- Preserve original bills/debts logic.
-- Preserve original transaction save path.
-- Do not introduce new backend truth layers.
-- Do not infer financial truth from partial history.
+Important correction:
+- A compressed/rejected v0.5 rewrite was generated incorrectly and must not count as a valid ship.
+- Do not use that rejected compressed file as rollback target.
+- Valid rollback target before v0.6 is the preserve-first v0.5 commit: `Preserve Command Centre and add readiness rules v0.5`.
 
-### Hard stop rules
+### Ship cap
 
-Do not work on these unless operator explicitly approves:
+Current ship window reached 8/8 valid shipments.
 
-- No `/api/money-contracts` logic.
-- No inferred balances.
-- No Forecast work.
-- No backend rewrites.
-- No D1 SQL.
-- No finance-brain changes.
-- No new “truth contract” abstraction.
-- No historical transaction totals treated as realtime balances.
+No further code shipments should be sent in this window unless a valid OS mode is activated.
 
-### Why recovery mode exists
+Next allowed work without new ship window:
+- planning
+- backend contract draft
+- D1 read-only checklist
+- acceptance criteria
+- rollback plan
+- state-file update
 
-A previous Ship 5 introduced unsafe `/api/money-contracts` abstraction and incorrectly treated lifetime `cc_spend` as current Credit Card outstanding.
+### Command Centre current capability
 
-Bad observed result:
+Command Centre is now a strong known-surface QA cockpit.
 
-- Credit Card showed around `Rs 266,577.78`.
-- Real expected outstanding was around `Rs 79k`.
-- Root cause: historical/lifetime CC spend was treated as realtime outstanding.
+It can check:
+- known page registry
+- known API health
+- finance truth signals
+- UI metadata/source cleanliness
+- impact graph and downstream recheck chain
+- hard blockers, warnings, and unknowns
+- allowed vs blocked trial pages
+- final trial gate
+- next 3 fixes
+- closeout reminder
 
-This logic is invalid and must not feed:
+Important truth:
+Command Centre is not yet a full 100% truth engine. It can only audit what it knows to check.
 
-- Credit Card
-- Forecast
-- Hub
-- Safety
-- Monthly Close
-- Any future cockpit
+Current honest status:
+- Useful as a known-page / known-API trial gate.
+- Not enough to certify the whole finance system as 100% safe.
+- Unknown coverage must remain Unknown, not Ready.
 
-### Credit Card correction rule
+### Meta-audit findings
 
-Credit Card must follow only this:
+Command Centre can still miss:
+- pages not in its registry
+- APIs not in its registry
+- runtime JS/browser errors
+- nav rendering issues
+- CSS/layout issues
+- backend formula mistakes
+- D1 data consistency issues
+- write-path safety without dry-run support
+- stale cache/deploy mismatch
+- scanner false positives and false negatives
 
-- Realtime outstanding must come from original trusted balance/account source.
-- Minimum due = 5% of realtime outstanding.
-- Statement date = 12th of every month.
-- Interest-free days = 55.
-- Never use lifetime `cc_spend` as current outstanding.
-- If realtime outstanding is unavailable, show `Unverified`.
-- Do not show fake `0`.
-- Do not show historical spend as due.
+Known issues from meta-audit:
+- Salary still needs cleanup because it exposes money-contracts metadata/source wording.
+- Hub still needs cleanup because it exposes debug/version/API wording.
+- Wrong close routes such as `close-month.html` and `month-close.html` may fall back to Hub instead of clean redirect/404.
+- Command Centre scanner needs polarity handling so safe phrases like “does not use money contracts” are not treated the same as actual unsafe usage.
+- Runtime/browser proof is still manual.
 
-A display-only `cc.html` rewrite was generated to remove `/api/money-contracts` dependency and read original realtime account/balance sources only.
+### Next queued shipment
 
-### Add Transaction state
+Next real shipment should be backend, not more frontend.
 
-Add Transaction icon integration caused a bad visual regression:
+Queued Shipment A:
+`/api/finance-command-center` backend read-only audit endpoint.
 
-- Duplicate-looking preview boxes appeared above real dropdowns.
-- Preview boxes were not selectable but looked like controls.
-- Empty state showed `?`, making it look broken.
-- User correctly halted that direction.
+Recommended file:
+`functions/api/finance-command-center.js`
 
-Correction generated:
+Purpose:
+- make Command Centre backend-aware
+- audit known APIs
+- audit D1 table/read-model health
+- audit business rules
+- return blockers, warnings, unknowns, scores, next actions
+- give frontend a backend truth source instead of relying only on browser-side checks
 
-- Restore `add.html` to clean pre-icon layout.
-- Restore `js/add.js` to clean pre-icon logic.
-- Expected versions after restore:
-  - `add.html` footer: `Add Transaction v0.7.0`
-  - `window.SovereignAdd.version` = `v0.4.0`
+Allowed:
+- D1 SELECT/read-only checks
+- table existence checks
+- row-count checks
+- API contract checks
+- business-rule checks
+- blocker/warning/unknown generation
 
-Current Add Transaction rule:
+Not allowed:
+- D1 writes
+- ledger tests
+- transaction creation
+- backend finance logic rewrites
+- `/api/money-contracts`
+- real save-path smoke tests
+- fake 100% readiness
 
-- Dropdowns must remain the only selectable controls.
-- No fake preview fields.
-- No duplicate sections.
-- No icon rollout on Add Transaction until visual pattern is redesigned and approved.
-- Save path must remain original.
-- No transaction logic changes.
+### Shipment A draft scope
 
-### Icon foundation state
+Backend response should include:
+- `ok`
+- `version`
+- `computed_at`
+- `verdict`
+- `score`
+- `scores`
+- `hard_blockers`
+- `warnings`
+- `unknowns`
+- `modules`
+- `pages`
+- `apis`
+- `d1`
+- `business_rules`
+- `next_actions`
 
-Stable visual icon foundation was generated:
+Minimum D1 read-only checks:
+- required finance tables exist
+- accounts readable
+- transactions readable
+- bills readable
+- debts readable
+- categories readable
+- reconciliation readable
+- audit_log readable if present
+- CC account/balance truth readable
+- no active bill with invalid zero amount unless intentionally configured
+- active debts have clear payable/receivable direction where possible
+- salary baseline can be identified or marked Unknown
 
-- `js/icons.js` v1.0.0
-- `css/icons.css` v1.0.0
+Minimum business rules:
+- CC outstanding must not come from lifetime spend.
+- CC outstanding must come from realtime account/balance source or remain Unknown.
+- Salary baseline must separate guaranteed from variable/speculative.
+- Forecast must not fake precision when sources are missing.
+- Missing data must show Unknown, not zero.
+- Add must not silently queue failed saves.
+- Money-contracts must not be used as trial-trust source.
+- Month activity must stay separate from full ledger truth.
 
-User added bank icon placeholder SVG assets under:
+### Next session start recommendation
 
-- `/assets/banks`
+Start next session with:
+1. Secure Boot.
+2. Confirm Command Centre v0.6 live state.
+3. Draft `/api/finance-command-center` JSON contract.
+4. Ship backend read-only endpoint only when ship window is valid.
+5. Then connect frontend Command Centre to backend audit result in a later ship.
 
-User added category icon placeholder SVG assets under:
+### Guardrails still active
 
-- `/assets/categories`
-
-Important:
-
-- Icons are official-style placeholders, not official bank logos.
-- Later official SVGs can replace same file paths without code changes.
-- Icon system is currently foundation-only.
-- Do not integrate icons site-wide until one page pattern is approved.
-- Do not put bank/category icon styling into nav CSS.
-- Do not let icon work touch data, IDs, APIs, D1, balances, or transaction logic.
-
-Bank asset paths:
-
-- `/assets/banks/cash.svg`
-- `/assets/banks/meezan.svg`
-- `/assets/banks/mashreq.svg`
-- `/assets/banks/ubl.svg`
-- `/assets/banks/ubl-prepaid.svg`
-- `/assets/banks/easypaisa.svg`
-- `/assets/banks/jazzcash.svg`
-- `/assets/banks/nayapay.svg`
-- `/assets/banks/js-bank.svg`
-- `/assets/banks/alfalah.svg`
-- `/assets/banks/alfalah-cc.svg`
-
-Category asset paths:
-
-- `/assets/categories/food.svg`
-- `/assets/categories/groceries.svg`
-- `/assets/categories/transport.svg`
-- `/assets/categories/fuel.svg`
-- `/assets/categories/bills.svg`
-- `/assets/categories/utilities.svg`
-- `/assets/categories/health.svg`
-- `/assets/categories/medicine.svg`
-- `/assets/categories/salary.svg`
-- `/assets/categories/income.svg`
-- `/assets/categories/debt.svg`
-- `/assets/categories/credit-card.svg`
-- `/assets/categories/atm.svg`
-- `/assets/categories/transfer.svg`
-- `/assets/categories/shopping.svg`
-- `/assets/categories/family.svg`
-- `/assets/categories/personal.svg`
-- `/assets/categories/other.svg`
-
-### Nav / side panel state
-
-Multiple nav iterations were attempted.
-
-Current user feedback:
-
-- Panel still did not feel professional enough.
-- Some iterations looked like a full-height left wall.
-- Some iterations failed to show icons.
-- Some iterations did not move with scroll as expected.
-- User asked for honest audit before more redesign.
-
-Latest generated target:
-
-- `js/nav.js` v1.1.9
-- `css/nav.css` v1.1.9
-- Scroll-with-page premium command dock.
-- Scoped SVG icons.
-- Visual only.
-
-But deployment/runtime was not confirmed.
-
-Before any new nav redesign, first verify live runtime:
+- Full-file rewrites only for code files.
+- No direct GitHub writes by Glean.
+- Manual copy-paste only.
+- No backend rewrites unless explicitly approved.
+- No D1 SQL mutations unless explicitly approved.
+- No ledger-polluting tests.
+- No `/api/money-contracts` work.
+- No fake balances.
+- No inferred CC outstanding.
+- Unknown must stay Unknown.
