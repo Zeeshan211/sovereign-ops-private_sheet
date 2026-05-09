@@ -1,43 +1,201 @@
 # SOVEREIGN_STATE.md
 
-## 2026-05-09 — Command Centre Authority Rollout Progress
+Last updated: 2026-05-09 PKT  
+State owner: Operator  
+Repo write mode: Manual copy-paste only  
+Direct GitHub writes by Glean: prohibited  
+Token policy: session-only PAT only, never stored, never echoed  
 
-### Active branch
+---
 
-Sovereign Finance Command Centre is moving from frontend QA cockpit toward authoritative safety gate.
+## Active operating frame
 
-Core rule agreed:
-- Command Centre full authority means blocking unsafe actions, routes, and later backend writes based on explicit backend policy.
-- Command Centre must not hide truth.
-- Command Centre must not rely on frontend-only scores.
+Current active path: PATH A — Sovereign Finance Command Centre / finance safety gate
+
+PATH A status:
+- Finance Command Centre Authority Rollout is active.
+- Phase 4 page-level soft authority is complete.
+- Phase 5 central Command Centre action policy is live.
+- Phase 6 route gates are next.
+- Phase 7 backend mutating API enforcement is not started.
+- Phase 8 overrides/audit trail is not started.
+
+PATH B status:
+- Salah today-live cleanup remains available but inactive.
+- Do not touch Salah when PATH A is active unless operator explicitly switches.
+- Do not touch Finance when PATH B is active unless operator explicitly switches.
+
+---
+
+## Secure Boot / Governance
+
+Boot phrase:
+- `boot vault`
+
+Secure Boot rules:
+- Boot phrase is public wake word, not authentication.
+- Before loading or revealing state, Glean must verify operator identity and fresh repo authorization.
+- If fresh PAT or pasted file contents are missing, ask once for fresh GitHub PAT or pasted files.
+- Never use stored token.
+- Never reveal state/backlog/architecture/finance data before Secure Boot passes.
+- Never write directly to personal GitHub.
+- Use manual copy-paste only.
+
+Repo policy:
+- Sheet repo: sovereign-ops-private_sheet
+- Finance repo: sovereign-finance
+- Use session-only read PAT for repo inspection only.
+- No persistent GitHub App / Code Writer / direct repo write.
+- Never output token-bearing URLs.
+- For code/state/governor file changes, provide:
+  - exact edit URL
+  - manual paste placeholder
+  - commit message
+  - deploy/verify steps where relevant
+
+Governor file next:
+- GLEAN_OPERATING_SYSTEM.md needs rewrite/update after this state save.
+- Operator said time/coding governance needs changes.
+- Do not edit governor file until state file is saved first.
+- After governor rewrite, memory cleanup is next because chats are getting clogged.
+
+---
+
+## Current chunk
+
+Chunk: Sovereign Finance Command Centre Authority Rollout  
+Current phase: Phase 5 complete / Phase 6 next  
+Current status: Command Centre is now central authority schema for action policy and lift criteria.
+
+Plain meaning:
+- Command Centre is no longer only a display cockpit.
+- It now centrally defines what is blocked, why it is blocked, what source caused the block, and what must pass before the block lifts.
+- Pages still only obey the verdict.
+- Backend mutating APIs do not yet reject unsafe writes.
+- Route gates are not live yet.
+- Overrides are not live yet.
+
+---
+
+## Core authority rule
+
+Command Centre full authority means:
+- Block unsafe actions, routes, and later backend writes based on explicit policy and checks.
+- Do not hide diagnostic truth.
+- Do not rely on frontend-only scores.
 - Unknown must never become Ready.
-- Command Centre blocks unsafe action, not diagnostic visibility.
-- If Command Centre blocks anything, Command Centre must show why inside Command Centre:
+- Block unsafe action, not visibility.
+- If anything is blocked, Command Centre must show:
   - what is blocked
   - block type
   - reason
   - source/rule/check
   - required fix
-  - override allowed/not allowed
-  - backend enforced/frontend enforced status
+  - override allowed or not allowed
+  - backend enforced status
+  - frontend enforced status
 
-### Current verified architecture
+Current enforcement reality:
+- Phase 4 added page-level obedience.
+- Phase 5 added central action policy and lift criteria.
+- Phase 6 will add route gates.
+- Phase 7 will add backend mutating API enforcement.
+- Phase 8 will add override/audit system.
 
-Command Centre now has these layers:
+---
 
-- Backend audit endpoint: /api/finance-command-center
-- Command Centre frontend display: monthly-close.html
-- Shared enforcement loader: /js/enforcement.js
-- Navigation authority markers: /js/nav.js
-- Page-level soft blocks started with Add Transaction and Bills
+## Current verified live backend state
 
-Backend authority is currently schema/display/soft-block authority only. Backend mutating API enforcement is not active yet.
+Latest pasted `/api/finance-command-center` output after Phase 5:
 
-### Completed
+- ok: true
+- version: 0.2.0
+- enforcement.version: 0.2.0
+- mode: authority
+- schema_only: true
+- verdict: ready_with_warnings
+- score: 59
+- api_health: 100
+- d1_core: 100
+- business_rules: 56
+- coverage: 100
+- write_safety: 0
+- runtime: 0
+- trial_gate.status: soft_ready
+- ready_for_known_page_trial: true
+- ready_for_full_system_certification: false
+- hard_blocker_count: 0
+- warning_count: 2
+- unknown_count: 3
+- blocked_routes: []
+- view_only_routes: 8
+- blocked_actions: 10
 
-#### Phase 0 — Architecture / policy
+Live central policy includes:
+- enforcement.routes
+- enforcement.actions
+- enforcement.blocked_actions
+- enforcement.view_only_routes
+- enforcement.action_checklists
+- enforcement.lift_criteria
+- enforcement.action_proof_status
+- enforcement.block_explanations
+- source_proofs
+- read_only_guards
 
-Status: complete.
+Read-only guards live:
+- No D1 INSERT
+- No D1 UPDATE
+- No D1 DELETE
+- No D1 ALTER
+- No ledger smoke tests
+- No transaction creation
+- No /api/money-contracts
+- Unknown remains Unknown
+- Runtime/browser checks remain manual
+- Write safety remains Unknown until dry-run exists
+- Enforcement v0.2.0 is central action policy only and does not yet mutate or reject API calls
+
+---
+
+## Phase tree
+
+Command Centre Authority Rollout
+
+- Phase 0 — Architecture / policy
+  - Status: complete
+
+- Phase 1 — Backend audit + enforcement schema
+  - Status: complete through `/api/finance-command-center v0.1.2`
+
+- Phase 2 — Command Centre enforcement display
+  - Status: complete through `monthly-close.html v0.7.3`
+
+- Phase 3 — Shared enforcement loader + nav markers
+  - Status: complete through `/js/enforcement.js v0.1.0` and `js/nav.js v1.2.0`
+
+- Phase 4 — Page-level soft blocks / page obedience
+  - Status: complete
+
+- Phase 5 — Central Command Centre action policy + lift criteria
+  - Status: live through `/api/finance-command-center v0.2.0`
+
+- Phase 6 — Route gates
+  - Status: next, not started
+
+- Phase 7 — Backend mutating API enforcement
+  - Status: not started
+
+- Phase 8 — Override system + audit trail
+  - Status: not started
+
+---
+
+## Completed phase details
+
+### Phase 0 — Architecture / policy
+
+Status: complete
 
 Completed:
 - Honest audit architecture agreed.
@@ -46,21 +204,21 @@ Completed:
 - Unknown cannot become Ready.
 - Every block requires visible explanation in Command Centre.
 
-#### Phase 1 — Backend audit + enforcement schema
+### Phase 1 — Backend audit + enforcement schema
 
-Status: complete through /api/finance-command-center v0.1.2.
+Status: complete through `/api/finance-command-center v0.1.2`
 
 Completed:
-- /api/finance-command-center created.
+- `/api/finance-command-center` created.
 - Backend endpoint is read-only.
 - No D1 writes.
 - No ledger tests.
-- No /api/money-contracts.
+- No `/api/money-contracts`.
 - v0.1.0 went live as backend audit truth endpoint.
 - v0.1.1 went live with stronger trial gate, source proofs, read-only guardrails, coverage, and next actions.
 - v0.1.2 went live with enforcement schema.
 
-v0.1.2 includes:
+v0.1.2 included:
 - enforcement
 - global_status
 - global_level
@@ -72,18 +230,14 @@ v0.1.2 includes:
 - override policy disabled
 
 Important:
-- Backend enforcement is schema-only right now.
-- It does not yet reject mutating API calls.
-- It defines what should be blocked and why.
-- It does not perform D1 writes.
-- It does not run ledger tests.
+- v0.1.2 did not reject mutating API calls.
+- v0.1.2 defined what should be blocked and why.
 
-#### Phase 2 — Command Centre enforcement display
+### Phase 2 — Command Centre enforcement display
 
-Status: complete through monthly-close.html v0.7.3.
+Status: complete through `monthly-close.html v0.7.3`
 
 Completed:
-- monthly-close.html v0.7.3 live.
 - Displays Enforcement Authority.
 - Displays Why Things Are Blocked.
 - Displays Route Gates.
@@ -98,15 +252,15 @@ Important:
 - It does not hide truth.
 - It must remain accessible even when other routes/actions are blocked.
 
-#### Phase 3 — Shared enforcement loader + nav markers
+### Phase 3 — Shared enforcement loader + nav markers
 
-Status: complete through /js/enforcement.js v0.1.0 and js/nav.js v1.2.0.
+Status: complete through `/js/enforcement.js v0.1.0` and `js/nav.js v1.2.0`
 
 Completed:
-- /js/enforcement.js v0.1.0 created.
-- js/nav.js v1.2.0 live.
-- window.SovereignEnforcement available.
-- Nav reads /api/finance-command-center.
+- `/js/enforcement.js v0.1.0` created.
+- `js/nav.js v1.2.0` live.
+- `window.SovereignEnforcement` available.
+- Nav reads `/api/finance-command-center`.
 - Nav shows enforcement markers:
   - Pass
   - Warning
@@ -115,191 +269,435 @@ Completed:
 - Nav does not block routes yet.
 - Command Centre must always remain accessible.
 
-#### Phase 4A — Add Transaction soft block
+### Phase 4 — Page-level soft blocks
 
-Status: complete.
+Status: complete
+
+Purpose:
+- Pages remain visible.
+- Pages obey Command Centre verdicts.
+- Unsafe actions are disabled when Command Centre blocks them.
+- Page-level enforcement is frontend soft authority only.
+- Backend mutating API enforcement is not active yet.
 
 Completed:
-- add.html updated to load:
-  - /js/nav.js?v=1.2.0
-  - /js/enforcement.js?v=0.1.0
-  - /js/add.js?v=0.4.3
-- js/add.js v0.4.3 live.
-- transaction.save soft block added.
-- Add page remains viewable.
-- Fields remain editable.
-- Save button disabled when Command Centre blocks transaction.save.
-- Soft block is frontend-only.
-- Backend API enforcement is not active yet.
+- Add Transaction soft block
+- Bills soft block
+- Debts soft block
+- Reconciliation soft block
+- Salary soft authority
+- Credit Card soft authority
+- Forecast soft authority
 
-Expected Add verification:
-- window.SovereignAdd.version returns v0.4.3
-- window.SovereignAdd.enforcement().saveGate.allowed is false while write safety is unknown
-- window.SovereignAdd.enforcement().saveGate.action is transaction.save
+Phase 4 verified items:
+- Add Transaction: complete
+- Bills: complete
+- Debts: complete
+  - `window.SovereignDebts.version === "v0.6.1"`
+  - operator confirmed: debts blocked
+- Reconciliation: complete
+  - `window.SovereignReconciliation.version === "v0.4.3"`
+  - operator confirmed: recon blocked
+- Salary: shipped as `salary.html v0.9.1`
+  - live verification not separately captured in final console output
+  - Phase 5 backend now shows salary source proof pass and salary route pass
+  - salary.save remains blocked by write safety unknown
+- Credit Card: live
+  - operator confirmed: cc live
+  - 4F shipped as `cc.html v0.4.2`
+  - no `/api/money-contracts`
+  - no historical-spend outstanding logic
+- Forecast: complete
+  - `window.SovereignForecast.version === "v0.3.2"`
+  - operator confirmed: forecast blocked
 
-Important correction from this phase:
-- If user reports something looks wrong, verify live source/version/output and compare expected vs actual before proposing fixes.
-- Do not immediately accept the claim and ship fixes.
-- Classify the issue first:
-  - real bug
-  - expected soft-block behavior
-  - UX/copy ambiguity
-  - stale cache/deploy mismatch
-  - backend policy issue
-  - frontend rendering issue
-  - operator misunderstanding
+Important Phase 4 correction:
+- Do not replace large existing files with compressed rewrites.
+- Current verified example: `cc.html` was ~667 lines; compressed 150-line rewrite was rejected.
+- Future large file work must preserve existing file shape.
+- If file is large, ship one file at a time.
+- No Canvas.
+- No downloadable files.
+- Manual placeholders only.
 
-#### Phase 4B — Bills soft block
+### Phase 5 — Central Command Centre action policy + lift criteria
 
-Status: shipment provided, live confirmation pending.
+Status: live through `/api/finance-command-center v0.2.0`
 
-Provided:
-- bills.html v0.8.2
-- js/bills.js v0.5.2
+Purpose:
+- Command Centre centrally decides what stays blocked and what can lift.
+- Pages only ask/obey central verdict.
+- Guardrails lift by passing central checks, not by manual page edits.
 
-Scope:
-- Bills remains viewable.
-- bill.save blocked when Command Centre blocks it.
-- Save controls disabled when write safety is unknown.
-- Block reason/source/fix/override/backend status shown.
-- /api/money-contracts dependency removed from provided Bills JS.
-- Reads /api/bills and /api/accounts.
-- No D1 writes from audit/enforcement system.
-- No ledger tests.
-- No route blocking.
+Target file:
+- `functions/api/finance-command-center.js`
 
-Next session must verify:
-- window.SovereignBills.version
-- expected v0.5.2
-- window.SovereignBills.enforcement()
-- expected saveGate.allowed === false
-- expected saveGate.action === "bill.save"
+Version:
+- endpoint version: 0.2.0
+- enforcement version: 0.2.0
 
-If Bills v0.5.2 is live and soft block works, mark Phase 4B complete.
+Completed:
+- Added central action policy.
+- Added action checklists.
+- Added lift criteria.
+- Added action proof status.
+- Added clearer why-still-blocked output.
+- Added per-action required-to-lift structure.
+- Kept endpoint read-only.
+- Kept schema-only.
+- No D1 writes.
+- No route gates.
+- No backend mutating API rejection.
+- No overrides.
+- No `/api/money-contracts`.
 
-### Current tree
+Phase 5 live proof from pasted output:
+- `version: "0.2.0"`
+- `enforcement.version: "0.2.0"`
+- `enforcement.action_checklists` present
+- `enforcement.lift_criteria` present
+- `enforcement.action_proof_status` present
+- `read_only_guards` present
+- `money_contracts.use_as_truth_source` permanently blocked
 
-Command Centre Authority Rollout
+Important correction:
+- Operator wrote “PHASE 6 live” after pasting Phase 5 output.
+- Correct interpretation: Phase 5 is live.
+- Phase 6 is not live because output still says:
+  - schema_only: true
+  - backend_enforced: false
+  - frontend_enforced: false
+  - blocked_routes: []
+  - route gates not actually blocking navigation yet
 
-- Phase 0 — Architecture / policy: complete
-- Phase 1 — Backend enforcement schema: complete through /api/finance-command-center v0.1.2
-- Phase 2 — Command Centre enforcement display: complete through monthly-close.html v0.7.3
-- Phase 3 — Shared enforcement loader + nav markers: complete through js/enforcement.js v0.1.0 + nav.js v1.2.0
-- Phase 4 — Page-level soft blocks:
-  - Phase 4A Add Transaction / transaction.save: complete
-  - Phase 4B Bills / bill.save: provided, live verification pending
-  - Phase 4C Debts / debt.save: pending
-  - Phase 4D Reconciliation / reconciliation.declare: pending
-  - Phase 4E Salary / salary.save: pending
-  - Phase 4F Credit Card / cc.use_for_decision + cc.use_for_forecast: pending
-  - Phase 4G Forecast / forecast.generate + forecast.mark_ready: pending
-- Phase 5 — Route gates: not started
-- Phase 6 — Backend API enforcement: not started
-- Phase 7 — Override system: not started
+---
 
-### Next safest action next session
+## Current blocked actions
 
-1. Verify Bills live state first.
-2. If Bills v0.5.2 is live and soft block works, mark Phase 4B complete.
-3. Then proceed to Phase 4C: Debts soft block for debt.save.
-4. Do not start route gates yet.
-5. Do not start backend API enforcement yet.
-6. Do not build overrides yet.
+Write safety unknown:
+- transaction.save
+- bill.save
+- debt.save
+- reconciliation.declare
+- salary.save
 
-### Guardrails still active
+Credit Card proof unknown:
+- credit_card.plan_payment
+- cc.use_for_decision
+- cc.use_for_forecast
 
+Forecast precision unknown:
+- forecast.generate
+- forecast.mark_ready
+
+Permanent block:
+- money_contracts.use_as_truth_source
+
+---
+
+## Current live blockers / warnings / unknowns
+
+Hard blockers:
+- none
+
+Warnings:
+- API health verifies route availability and JSON readability, but not every downstream formula.
+- Month activity separation is not deeply verified.
+
+Unknowns:
+- Credit Card account/balance truth could not be fully verified.
+- Forecast endpoint/page is not deeply checked yet.
+- Add write path is not dry-run verified.
+
+Critical live detail:
+- Accounts table has one CC account, but no realtime balance column was identified.
+- Credit Card proof stays unknown because `accounts` columns include `opening_balance`, `credit_limit`, `min_payment_amount`, `statement_day`, `payment_due_day`, but no verified current balance source.
+- `/api/balances?debug=1` returns `cc_outstanding`, but Phase 5 did not yet treat that as sufficient CC source proof.
+- Do not infer CC outstanding from lifetime spend.
+- Do not treat missing CC source as zero.
+
+---
+
+## Next full phase
+
+### Phase 6 — Route gates
+
+Status: next, not started
+
+Goal:
+- Use Command Centre route verdicts to prevent unsafe entry/action at navigation or app-shell layer.
+- Command Centre must remain accessible at all times.
+- Diagnostic visibility must not be hidden.
+- Route gates should use Phase 5 central `enforcement.routes`.
+- Route gates must not start backend API rejection yet.
+
+Phase 6 should answer:
+- Which routes are view-only?
+- Which routes are fully pass?
+- Which routes should show blocked/action-limited state?
+- How does user know why a route is blocked?
+- How does Command Centre remain accessible even if others are gated?
+
+Phase 6 must not:
+- Add backend mutating API enforcement.
+- Add D1 writes.
+- Add override system.
+- Hide Command Centre.
+- Hide diagnostic truth.
+- Remove page-level soft blocks.
+- Re-enable blocked actions manually.
+- Use `/api/money-contracts`.
+
+Likely target files:
+- `js/nav.js`
+- possibly app-shell/shared navigation code only
+- no page rewrites unless route-gate UI requires a small shared hook
+
+Important:
+- Before shipping Phase 6, inspect current `js/nav.js`.
+- Preserve current nav shape.
+- Do not compress large files.
+- One full-file rewrite at a time.
+- Full phase framing, but code delivery can be one file at a time if large.
+
+---
+
+## Phase 7 — Backend mutating API enforcement
+
+Status: not started
+
+Purpose:
+- Mutating endpoints reject unsafe writes directly.
+- Backend APIs become enforcement layer.
+- This is not allowed until Phase 6 is complete and action names/checklists are stable.
+
+Phase 7 likely covers:
+- `/api/transactions`
+- `/api/bills`
+- `/api/debts`
+- `/api/reconciliation`
+- `/api/salary`
+- any other POST/PUT/PATCH/DELETE routes
+
+Hard requirement before Phase 7:
+- Write safety must be designed.
+- Dry-run or preflight proof must exist.
+- Backend policy must be stable.
+- No ledger-polluting smoke tests.
+- No D1 mutation from Command Centre audit/enforcement.
+
+---
+
+## Phase 8 — Override system + audit trail
+
+Status: not started
+
+Purpose:
+- Allow explicit operator override only after backend enforcement is mature.
+- Override must be transparent, time-limited, reason-required, and audit-safe.
+
+Current override status:
+- disabled
+- `allowed: false`
+- reason required: true
+- audit required: true
+- expires_minutes: 30
+- note: Overrides are disabled in enforcement schema v0.2.0.
+
+Do not build overrides yet.
+
+---
+
+## Guardrails still active
+
+General:
 - Full-file rewrites only for code files.
 - Manual copy-paste only.
+- No downloadable files unless explicitly requested.
+- No Canvas for code/state delivery unless explicitly requested.
 - Glean must not write directly to personal GitHub.
-- No /api/money-contracts.
+- No compressed replacements over large files.
+- Verify current file size/shape before replacement.
+- One file at a time when large.
+- Full phase structure, not tiny dragged subphases.
+
+Finance safety:
+- No `/api/money-contracts`.
 - No D1 writes from audit/enforcement work.
 - No ledger-polluting smoke tests.
-- No route blocking until soft blocks are proven.
-- No backend mutating API enforcement until action policy is stable.
+- No route gates until Phase 6.
+- No backend mutating API enforcement until Phase 7.
+- No overrides until Phase 8.
 - Command Centre must remain accessible at all times.
 - Diagnostic visibility must stay available.
 - If blocked, show why in Command Centre.
-- If user reports a problem, verify before proposing fixes.
 - Unknown must stay Unknown.
 - Do not infer Credit Card outstanding from lifetime spend.
 - Do not fake balances.
 - Do not use frontend-only scores as final authority.
 
-### Current known backend truth state
+Verification:
+- If operator reports a problem, verify before proposing fixes.
+- Required process:
+  1. Check live version.
+  2. Check loaded script URLs.
+  3. Check backend JSON.
+  4. Check visible behavior.
+  5. Check console output if available.
+  6. Check file state if repo read is available.
+  7. Separate verified facts from interpretation.
+  8. Compare intended behavior vs actual behavior.
+  9. Classify before fixing:
+     - real defect
+     - expected behavior
+     - copy/UX issue
+     - stale cache/deploy mismatch
+     - backend policy issue
+     - frontend rendering issue
+     - operator misunderstanding
 
-Latest known backend audit state before close:
-- Backend audit endpoint exists.
-- Required APIs were passing in latest pasted JSON.
-- Required D1 tables were passing in latest pasted JSON.
-- Write safety remains unknown.
-- Runtime remains manual/unknown.
-- Credit Card source proof remained unknown because accounts table did not expose a realtime balance column.
-- Forecast precision remained unknown.
-- Add write safety remained unknown.
-- Money Contracts is banned and intentionally not called.
-- Backend enforcement schema v0.1.2 is live.
-- Frontend enforcement display v0.7.3 is live.
-- Nav enforcement markers v1.2.0 are live.
-- Add soft block v0.4.3 is live.
-- Bills soft block v0.5.2 needs live verification.
+---
 
-### Important process correction
+## Current data/source status from Phase 5
 
-When the operator reports something is wrong, do not jump directly to fixes.
+APIs passing:
+- `/api/balances?debug=1` version v0.5.3
+- `/api/accounts` version v0.2.6
+- `/api/transactions` version v0.1.4
+- `/api/bills` version 0.2.0
+- `/api/debts` version v0.3.1
+- `/api/categories`
+- `/api/reconciliation` version v0.2.2
+- `/api/salary` version v0.2.2
+- `/api/forecast` version v0.2.1
 
-Required process:
-1. Verify live state first:
-   - current version
-   - loaded script URLs
-   - backend JSON
-   - visible behavior
-   - console output if available
-   - file state if repo read is available
-2. Separate verified facts from interpretation.
-3. Compare intended behavior against actual behavior.
-4. Classify:
-   - real defect
-   - expected behavior
-   - copy/UX issue
-   - stale cache/deploy mismatch
-   - backend policy issue
-   - frontend rendering issue
-   - operator misunderstanding
-5. Only then propose a fix or shipment.
+D1 required tables passing:
+- accounts
+- transactions
+- bills
+- debts
+- categories
+- reconciliation
 
-This correction exists because premature solutioning caused drag during Add Transaction soft-block review.
+Optional tables present:
+- audit_log
+- salary
+- settings
 
-### Next likely branch after Bills verification
+Row counts from Phase 5:
+- accounts: 11
+- transactions: 145
+- bills: 6
+- debts: 11
+- categories: 13
+- reconciliation: 10
+- audit_log: 57
+- salary: 1
+- settings: 0
 
-If Bills soft block passes:
-- Phase 4C: Debts soft block for debt.save
+Business rules:
+- cc_outstanding_source: unknown
+- cc_unknown_not_zero: pass
+- salary_baseline_split: pass
+- forecast_precision: unknown
+- missing_data_unknown_not_zero: pass
+- add_write_path: unknown
+- money_contracts_banned: pass
+- month_activity_scope: warning
+- debt_direction: pass
 
-Expected Phase 4C behavior:
-- Debts page remains viewable.
-- debt.save disabled if backend enforcement blocks it.
-- Block reason/source/fix/override/backend status visible.
-- No route blocking.
-- No backend API enforcement yet.
-- No D1 writes from audit/enforcement system.
-- No ledger tests.
+---
 
-### Do not start yet
+## Salah path saved state
 
-Do not start Phase 5 route gates until page-level soft blocks are proven.
+PATH B — Salah today-live cleanup remains parked.
 
-Do not start Phase 6 backend API enforcement until:
-- action policy names are stable
-- page-level soft blocks are verified
-- Command Centre explanations are complete
+Known prior state:
+- Salah D1 today-live foundation exists.
+- `/api/salah/log v0.2.0` POST had worked.
+- `/api/salah/today v0.2.0` had returned live data for 2026-05-08.
+- Product correction agreed:
+  - Fard daily score must be separate from bonus prayers.
+  - Fard = core /10 from Fajr, Dhuhr, Asr, Maghrib, Isha only.
+  - Bonus = Jumuah, Tahajjud, Witr, Ishraq, Duha, Awwabin, Nafl.
+  - Qaza = recovery.
+  - Udhr = attribute, not location/category.
+- Full rewrite for `functions/api/salah/log.js v0.3.0` was provided but live verification was not confirmed.
+- Final provided `salah.html v0.8.0` was intended to fix horizontal overflow, but live verification was not confirmed.
 
-Do not start Phase 7 overrides until backend enforcement is mature.
+If PATH B is selected later:
+1. Verify live versions for:
+   - `functions/api/salah/log.js`
+   - `functions/api/salah/today.js`
+   - `salah.html`
+2. Finish today.js read-model cleanup so score/charts match corrected model.
+3. Validate no horizontal scrollbar on operator screen.
+4. Do not touch Finance unless operator switches back to PATH A.
 
-### Boot reminder for next session
+---
 
-Start with Secure Boot.
+## Process corrections from this session
 
-After Secure Boot:
-1. Verify Bills live state.
-2. Confirm whether Phase 4B is complete.
-3. Continue with Phase 4C only if Bills passes.
-4. Keep Command Centre visible and authoritative.
+1. Full phase framing:
+- Operator does not want slow subphase-by-subphase handling.
+- Present full phase status, full blockers, and full phase completion path.
+- Code may still be delivered one file at a time when files are large.
+
+2. Large file safety:
+- Do not replace large files with compressed rewrites.
+- Verify file size/shape first.
+- `cc.html` example proved this rule: current was ~667 lines and compressed rewrite was unsafe.
+- `forecast.html` example: current was ~1,075 lines and required full rewrite, not compressed batch.
+- `finance-command-center.js` was ~1,788 lines and had to be delivered in multiple manual placeholders.
+
+3. Delivery surface:
+- No downloadable files for Sovereign Ops unless explicitly requested.
+- No Canvas for code/state delivery unless explicitly requested.
+- Manual placeholders are preferred.
+- For very large files, split into numbered placeholders and tell operator not to commit until final placeholder.
+
+4. Verification before fixes:
+- If something appears wrong, verify first.
+- Do not accept claim and fix blindly.
+
+5. Guardrail lifting:
+- Guardrails lift centrally from Command Centre after proof checks pass.
+- Pages should not manually decide to lift their own blocks.
+- Bad path: edit page to remove disabled button.
+- Good path: fix source/checklist so Command Centre returns allowed.
+
+---
+
+## Next exact work order
+
+1. Save this `SOVEREIGN_STATE.md` update.
+2. Rewrite/update `GLEAN_OPERATING_SYSTEM.md` / governor file.
+   - Operator specifically said time governance needs changes.
+   - Preserve Secure Boot.
+   - Preserve manual-only repo writes.
+   - Preserve no downloadable files.
+   - Preserve full phase framing.
+   - Preserve one-file-at-a-time for large files.
+3. After governor file is saved, perform memory cleanup.
+   - Remove stale/duplicated state.
+   - Keep only durable high-signal rules.
+   - Do not delete active security/governance constraints.
+   - Do not delete current Finance Phase 4/5 state until state file + governor file are both saved.
+4. Resume with Phase 6 route gates when operator requests execution.
+
+---
+
+## Boot response target after next Secure Boot
+
+After Secure Boot passes, summarize:
+
+Current chunk: Sovereign Finance Command Centre Authority Rollout  
+Status: Phase 5 live, Phase 6 route gates next  
+OS/governor: read latest GLEAN_OPERATING_SYSTEM.md  
+Active path: PATH A unless operator switches  
+Top active items:
+1. Review governor/time rule changes.
+2. Clean memory after governor save.
+3. Start Phase 6 route gates only after cleanup/confirmation.
+
+Do not default into code before governor rewrite and memory cleanup are handled.
